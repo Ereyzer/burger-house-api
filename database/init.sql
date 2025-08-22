@@ -1,0 +1,15 @@
+-- database/init.sql
+-- TODO: create structure
+-- Створення таблиці
+-- CREATE TABLE IF NOT EXISTS `products` (
+--   `id` INT AUTO_INCREMENT PRIMARY KEY,
+--   `name` VARCHAR(255) NOT NULL,
+--   `description` TEXT,
+--   `price` DECIMAL(10, 2) NOT NULL
+-- );
+
+-- Вставка даних для парсингу/ініціалізації
+-- INSERT INTO `products` (`name`, `description`, `price`) VALUES
+-- ('Classic Burger', '100% beef patty with lettuce and tomato', 120.00),
+-- ('Cheeseburger', 'Classic Burger with melted cheese', 140.00),
+-- ('Veggie Burger', 'Black bean patty with avocado', 130.00);
