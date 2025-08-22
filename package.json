@@ -12,6 +12,10 @@
     "app:exec": "docker-compose exec app sh",
     "app:run": "docker-compose run --rm app",
     "app:install": "npm run app:run -- npm install",
-    "app:install-package": "npm run app:run -- npm install $@"
+    "app:install-package": "npm run app:run -- npm install $@",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }
