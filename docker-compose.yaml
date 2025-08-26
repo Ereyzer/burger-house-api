@@ -9,25 +9,27 @@ services:
     restart: unless-stopped
     volumes:
       - ./app:/usr/src/app
-      - /usr/src/app/node_modules
+      # - /usr/src/app/node_modules
     ports:
-      - 3000:3000
+      - ${APP_PORT}:${APP_PORT}
     env_file:
       - ./.env
     depends_on:
       - db
-      - redis
+      # - redis
   db:
-    image: mysql:latest
-    container_name: mysql-db
+    image: postgres:latest
+    container_name: postgres-db
     restart: unless-stopped
+    shm_size: 128mb
     env_file:
       - ./.env
     volumes:
-      - mysql-data:/var/lib/mysql
+      # do not need now
+      # - postgres-data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - 3306:3306
+      - ${DB_PORT}:${DB_PORT}
 
   adminer:
     image: adminer:latest
@@ -37,16 +39,16 @@ services:
       - 8080:8080
     depends_on:
       - db
+# TODO: when it is start be important
+# redis:
+#   image: redis:8.2.1-alpine
+#   container_name: redis-cache
+#   restart: unless-stopped
+#   volumes:
+#     - redis-data:/data
+#   ports:
+#     - 6379:6379
 
-  redis:
-    image: redis:8.2.1-alpine
-    container_name: redis-cache
-    restart: unless-stopped
-    volumes:
-      - redis-data:/data
-    ports:
-      - 6379:6379
-
-volumes:
-  mysql-data:
-  redis-data:
+# volumes:
+# postgres-data:
+# redis-data:

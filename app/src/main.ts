@@ -1,10 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { envVars, envVarValue } from './config/constants/env-constants';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
-  return;
+  try {
+    const app = await NestFactory.create(AppModule);
+    await app.listen(envVarValue[envVars.APP_PORT], () =>
+      console.log(`server run on port: ${envVarValue[envVars.APP_PORT]}`),
+    );
+    return;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 bootstrap().catch((err) => console.log(err));
