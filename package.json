@@ -1,4 +1,7 @@
 {
+  "dependencies": {
+    "@nestjs/mapped-types": "*"
+  },
   "name": "burger-house-api",
   "version": "1.0.0",
   "scripts": {
@@ -13,7 +16,8 @@
     "app:run": "docker-compose run --rm app",
     "app:install": "npm run app:run -- npm install",
     "app:install-package": "npm run app:run -- npm install $@",
-    "prepare": "husky"
+    "prepare": "husky",
+    "firststart": "npm ci; npm run up:build"
   },
   "devDependencies": {
     "husky": "^9.1.7"

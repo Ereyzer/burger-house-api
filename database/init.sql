@@ -1,7 +1,7 @@
 -- database/init.sql
 -- TODO: create structure
 
---TODO:  tables for personal and they permissions
+--TODO:  tables for personnel and they permissions
 -- create table roles
 CREATE TABLE IF NOT EXISTS roles (
   Id VARCHAR(10) PRIMARY KEY,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS roles (
 );
 
 -- comments for table roles
-COMMENT ON TABLE roles IS 'Storage table for roles of personal.';
+COMMENT ON TABLE roles IS 'Storage table for roles of personnel.';
 COMMENT ON COLUMN roles.id IS 'Unique role id (for example, "admin", "employee", "manager", "owner").';
 COMMENT ON COLUMN roles.display_name IS 'Display role name for user interface.';
 COMMENT ON COLUMN roles.description IS 'description about role.';
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS permits (
 );
 
 -- comments for table permits
-COMMENT ON TABLE permits IS 'Storage table for permits of personal.';
+COMMENT ON TABLE permits IS 'Storage table for permits of personnel.';
 COMMENT ON COLUMN permits.id IS 'Unique name of permit (for example, "products:read").';
 COMMENT ON COLUMN permits.display_name IS 'dsplay name for user interface.';
 COMMENT ON COLUMN permits.description IS 'explain why this permit you need.';
@@ -39,9 +39,9 @@ COMMENT ON COLUMN permits.description IS 'explain why this permit you need.';
 -- TODO: insert some permissions
 INSERT INTO permits (id, display_name, description)
 VALUES
-('personal:add', 'Додати користовача', 'можливість додавати нових користовачів в таблицю personal'),
-('personal:role', 'Оновлення ролі', 'можливість оновлювати ролі користувачів'),
-('personal:info', 'Оновлення персональних даних', 'Можливість оновити персональні дані'),
+('personnel:add', 'Додати користовача', 'можливість додавати нових користовачів в таблицю personnel'),
+('personnel:role', 'Оновлення ролі', 'можливість оновлювати ролі користувачів'),
+('personnel:info', 'Оновлення персональних даних', 'Можливість оновити персональні дані'),
 ('manager:info', 'Оновити менеджера', 'Можливість оновити персональні дані працівника з дозволом "manager"'),
 ('employee:add', 'Додати працівника', 'Можливість додати працівника з дозволом "employee"'),
 ('employee:info', 'Оновити працівника', 'Можливість оновити персональні дані працівника з дозволом "employee"'),
@@ -102,7 +102,7 @@ ON CONFLICT (role_id, permit_id) DO NOTHING;
 
 
 -- Create table persons
-CREATE TABLE IF NOT EXISTS personal (
+CREATE TABLE IF NOT EXISTS personnel (
   id SMALLSERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password CHAR(60) NOT NULL,
@@ -116,8 +116,8 @@ CREATE TABLE IF NOT EXISTS personal (
   role_id VARCHAR(10) REFERENCES roles (id)
 );
 
-COMMENT ON TABLE personal IS 'Storage info about personal of restorant.';
-COMMENT on COLUMN personal.role_id IS 'role off user for permits';
+COMMENT ON TABLE personnel IS 'Storage info about personnel of restorant.';
+COMMENT on COLUMN personnel.role_id IS 'role off user for permits';
 
 -- TODO: table for restorant
 -- create table about
