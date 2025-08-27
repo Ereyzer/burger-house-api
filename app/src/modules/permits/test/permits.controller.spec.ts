@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PermitsController } from './permits.controller';
-import { PermitsService } from './permits.service';
+import { PermitsController } from '../permits.controller';
+import { PermitsService } from '../permits.service';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { MockReposytory } from '../../../test/mock/reposytory';
-import { Permit } from './entities/permit.entity';
+import { MockReposytory } from '../../../../test/mock/reposytory';
+import { Permit } from '../entities/permit.entity';
 
 describe('PermitsController', () => {
   let controller: PermitsController;

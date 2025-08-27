@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PermitsService } from './permits.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Permit } from './entities/permit.entity';
-import { MockReposytory } from '../../../test/mock/reposytory';
-
+import { MockReposytory } from '../../../../test/mock/reposytory';
+import { PermitsService } from '../permits.service';
+import { Permit } from '../entities/permit.entity';
 describe('PermitsService', () => {
   let service: PermitsService;
 

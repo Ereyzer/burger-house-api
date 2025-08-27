@@ -4,7 +4,7 @@
 --TODO:  tables for personnel and they permissions
 -- create table roles
 CREATE TABLE IF NOT EXISTS roles (
-  Id VARCHAR(10) PRIMARY KEY,
+  Id VARCHAR(20) PRIMARY KEY,
   display_name VARCHAR(50) NOT NULL UNIQUE,
   description VARCHAR(150)
 );
@@ -59,7 +59,7 @@ VALUES
 ON CONFLICT (id) DO NOTHING; 
 
 CREATE TABLE IF NOT EXISTS permit_in_role (
-  role_id VARCHAR(10) NOT NULL,
+  role_id VARCHAR(20) NOT NULL,
   permit_id VARCHAR(50) NOT NULL,
 
   PRIMARY KEY (role_id, permit_id),
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS personnel (
   birthday DATE,
   address VARCHAR(255),
   picture VARCHAR(255), -- url on picture
-  role_id VARCHAR(10) REFERENCES roles (id)
+  role_id VARCHAR(20) REFERENCES roles (id)
 );
 
 COMMENT ON TABLE personnel IS 'Storage info about personnel of restorant.';

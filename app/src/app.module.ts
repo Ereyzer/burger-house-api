@@ -6,6 +6,8 @@ import { ModulesModule } from './modules/modules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envVars, envVarValue } from './config/constants/env-constants';
 import { Permit } from './modules/permits/entities/permit.entity';
+import { Role } from './modules/roles/entities/role.entity';
+import { PermitInRole } from './modules/roles/entities/permitInRole.entity';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { Permit } from './modules/permits/entities/permit.entity';
       username: envVarValue[envVars.DB_USERNAME],
       password: envVarValue[envVars.DB_PASSWORD],
       database: envVarValue[envVars.DB_DATABASE],
-      entities: [Permit],
+      entities: [Permit, Role, PermitInRole],
       synchronize: false,
     }),
     OwnerModule,
