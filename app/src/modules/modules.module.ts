@@ -12,16 +12,17 @@ import { RolesModule } from './roles/roles.module';
     RouterModule.register([
       {
         path: 'admin',
-        module: PersonnelModule,
+        // module: PersonnelModule,
+        children: [PersonnelModule, PermitsModule, RolesModule],
       },
-      {
-        path: 'admin',
-        module: PermitsModule,
-      },
-      {
-        path: 'admin',
-        module: RolesModule,
-      },
+      // {
+      //   path: 'admin',
+      //   module: PermitsModule,
+      // },
+      // {
+      //   path: 'admin',
+      //   module: RolesModule,
+      // },
     ]),
   ],
 })
