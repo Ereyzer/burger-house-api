@@ -1,28 +1,19 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { PermitsService } from './permits.service';
-import { CreatePermitDto } from './dto/create-permit.dto';
+import { ApiForbiddenResponse, ApiNotFoundResponse } from '@nestjs/swagger';
 
 @Controller('permits')
+@ApiForbiddenResponse()
 export class PermitsController {
   constructor(private readonly permitsService: PermitsService) {}
-
-  @Post()
-  create(@Body() createPermitDto: CreatePermitDto) {
-    return this.permitsService.create(createPermitDto);
-  }
-
   @Get()
   findAll() {
     return this.permitsService.findAll();
   }
 
+  @ApiNotFoundResponse()
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.permitsService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.permitsService.remove(+id);
+    return this.permitsService.findOne(id);
   }
 }

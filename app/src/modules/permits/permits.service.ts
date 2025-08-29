@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePermitDto } from './dto/create-permit.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Permit } from './entities/permit.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class PermitsService {
@@ -10,21 +9,16 @@ export class PermitsService {
     @InjectRepository(Permit)
     private readonly permitsReposytory: Repository<Permit>,
   ) {}
-  create(createPermitDto: CreatePermitDto) {
-    console.log(createPermitDto);
-
-    return 'This action adds a new permit';
-  }
 
   findAll(): Promise<Permit[]> {
     return this.permitsReposytory.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} permit`;
+  findOne(id: string) {
+    return this.permitsReposytory.findOneBy({ id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} permit`;
+  findMany(ids: string[]) {
+    return this.permitsReposytory.findBy({ id: In(ids) });
   }
 }

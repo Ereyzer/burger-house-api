@@ -7,11 +7,11 @@
   "scripts": {
     "up:dev": "docker-compose up -d",
     "up:build": "cd ./app; npm ci; cd ../; docker-compose up -d --build",
-    "up:logs": "npm run up:dev; npm run logs:app",
+    "up:logs": "npm run up:dev; npm run logs",
     "up:stop": "docker-compose up stop",
     "up:start": "docker-compose up start",
     "down": "docker-compose down",
-    "logs:app": "docker-compose logs -f app",
+    "logs": "docker-compose logs -f app",
     "app:exec": "docker-compose exec app sh",
     "app:run": "docker-compose run --rm app",
     "app:install": "npm run app:run -- npm install",
