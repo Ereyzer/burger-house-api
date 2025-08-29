@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,11 +11,6 @@ import { Role } from './entities/role.entity';
 import { DataSource, Repository } from 'typeorm';
 import { defaultConstants } from '../../config/constants/default-constants';
 import { PermitInRole } from './entities/permitInRole.entity';
-import {
-  BadRequest,
-  InternalServerError,
-  NotFoundError,
-} from '../../config/errors';
 
 @Injectable()
 export class RolesService {
@@ -55,7 +55,7 @@ export class RolesService {
         return { ...newRole, permits: savedPermitInRoles };
       });
     } else {
-      throw new InternalServerError();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -102,9 +102,9 @@ export class RolesService {
   // TODO:
   async update(id: string, { description, permits }: UpdateRoleDto) {
     if (id === defaultConstants.roles.OWNER)
-      throw new BadRequest('you can`t update owner');
+      throw new BadRequestException('you can`t update owner');
     const role = await this.roleRepository.findOneBy({ id });
-    if (!role) throw new NotFoundError(`${id} not exist`);
+    if (!role) throw new NotFoundException(`${id} not exist`);
     if (permits) {
       console.log(permits);
     }
@@ -117,7 +117,7 @@ export class RolesService {
 
   remove(id: string) {
     if (id === defaultConstants.roles.OWNER)
-      throw new BadRequest('you can`t delete owner');
+      throw new BadRequestException('you can`t delete owner');
     return this.roleRepository.delete(id);
   }
 }
