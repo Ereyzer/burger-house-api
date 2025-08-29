@@ -2,12 +2,18 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { envVars, envVarValue } from './config/constants/env-constants';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap(): Promise<void> {
   try {
     const app = await NestFactory.create(AppModule);
-
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    );
     const config = new DocumentBuilder()
       .setTitle('Burger House API')
       .setDescription('Describe how the endpoints work')

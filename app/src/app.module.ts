@@ -8,9 +8,24 @@ import { envVars, envVarValue } from './config/constants/env-constants';
 import { Permit } from './modules/permits/entities/permit.entity';
 import { Role } from './modules/roles/entities/role.entity';
 import { PermitInRole } from './modules/roles/entities/permitInRole.entity';
+import { Personnel } from './modules/personnel/entities/personnel.entity';
+import Joi from 'joi';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test', 'prewiev')
+          .required(),
+        [envVars.DB_DATABASE]: Joi.string().required(),
+        [envVars.DB_USERNAME]: Joi.string().required(),
+        [envVars.DB_PASSWORD]: Joi.string().required(),
+        [envVars.DB_HOST]: Joi.string().required(),
+        [envVars.DB_PORT]: Joi.string().required(),
+      }),
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: envVarValue[envVars.DB_HOST],
@@ -18,9 +33,10 @@ import { PermitInRole } from './modules/roles/entities/permitInRole.entity';
       username: envVarValue[envVars.DB_USERNAME],
       password: envVarValue[envVars.DB_PASSWORD],
       database: envVarValue[envVars.DB_DATABASE],
-      entities: [Permit, Role, PermitInRole],
+      entities: [Permit, Role, PermitInRole, Personnel],
       synchronize: false,
     }),
+
     OwnerModule,
     ModulesModule,
   ],

@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS personnel (
   phone VARCHAR(255),
   name VARCHAR(255),
   surname VARCHAR(255),
-  father_name VARCHAR(252),
+  father_name VARCHAR(255),
   birthday DATE,
   address VARCHAR(255),
   picture VARCHAR(255), -- url on picture

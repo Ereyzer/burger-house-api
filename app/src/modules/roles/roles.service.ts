@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -61,7 +60,7 @@ export class RolesService {
         return { ...newRole, permits: savedPermitInRoles };
       });
     } else {
-      throw new InternalServerErrorException();
+      throw new ConflictException('role is exist');
     }
   }
 
