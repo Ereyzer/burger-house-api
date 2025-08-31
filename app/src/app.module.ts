@@ -29,7 +29,6 @@ import { Password } from './modules/personnel/entities/password.entity';
           .pattern(new RegExp(/^[0-9]*$/))
           .required(),
         [envVars.CIPER_SALT]: Joi.string().required(),
-        [envVars.CIPER_BITES]: Joi.string().required(),
         [envVars.CIPER_ALGORITHM]: Joi.string().required(),
         [envVars.PASSWORD_PEPPER]: Joi.string().required(),
       }),

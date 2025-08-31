@@ -3,8 +3,15 @@ import { CipherAndHash } from '../CipherAndHash';
 jest.mock('../../config/constants/env-constants', () => ({
   envVarValue: {
     PASSWORD_PEPPER: 'my-test-secret-pepper-for-tests',
+    CIPER_SALT:
+      '5a5248f30b9817ed7c16e86528754e1ddc0d4446cfeb015e2cb6f31bb11c27fd',
+    CIPER_ALGORITHM: '',
   },
-  envVars: { PASSWORD_PEPPER: 'PASSWORD_PEPPER' },
+  envVars: {
+    PASSWORD_PEPPER: 'PASSWORD_PEPPER',
+    CIPER_SALT: 'CIPER_SALT',
+    CIPER_ALGORITHM: 'CIPER_ALGORITHM',
+  },
 }));
 
 describe('paranoic', () => {
@@ -69,4 +76,19 @@ describe('paranoic', () => {
       expect(isMatch).toBe(false);
     });
   });
+  //TODO: how test and do not show algorytm
+  // describe('text encrypting and decrypting', () => {
+  //   const text = 'some text';
+
+  //   it('encrypt text', () => {
+  //     const encryptText = instance.encryptText(text);
+
+  //     expect(typeof encryptText).toBe('string');
+  //     const decryptText = instance.decryptText(encryptText);
+
+  //     expect(typeof decryptText).toBe('string');
+
+  //     expect(decryptText === text).toBe(true);
+  //   });
+  // });
 });

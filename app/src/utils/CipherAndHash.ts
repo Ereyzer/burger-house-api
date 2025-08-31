@@ -1,6 +1,6 @@
 import bcrypt, { compare, genSalt } from 'bcrypt';
 import { envVars, envVarValue } from '../config/constants/env-constants';
-import { randomBytes } from 'crypto';
+import crypto from 'node:crypto';
 
 export class CipherAndHash {
   static #inctance: CipherAndHash | null = null;
@@ -63,6 +63,38 @@ export class CipherAndHash {
   }
 
   public generateSalt(length: number): string {
-    return randomBytes(length).toString('hex');
+    return crypto.randomBytes(length).toString('hex');
+  }
+
+  public encryptText(text: string): string {
+    const iv = crypto.randomBytes(16);
+
+    const key = Buffer.from(envVarValue[envVars.CIPER_SALT], 'hex');
+
+    const cipher = crypto.createCipheriv(
+      envVarValue[envVars.CIPER_ALGORITHM],
+      key,
+      iv,
+    );
+    const encriypted = Buffer.concat([
+      cipher.update(text, 'utf8'),
+      cipher.final(),
+    ]);
+    return [iv.toString('base64'), encriypted.toString('base64')].join(':');
+  }
+
+  public decryptText(encriypted: string): string {
+    const [encryptIv, encryptText] = encriypted.split(':');
+    const iv = Buffer.from(encryptIv, 'base64');
+    const key = Buffer.from(envVarValue[envVars.CIPER_SALT], 'hex');
+    const encriypt = Buffer.from(encryptText, 'base64');
+    const cipher = crypto.createDecipheriv(
+      envVarValue[envVars.CIPER_ALGORITHM],
+      key,
+      iv,
+    );
+    const text = Buffer.concat([cipher.update(encriypt), cipher.final()]);
+
+    return text.toString('utf8');
   }
 }

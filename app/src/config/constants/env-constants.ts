@@ -9,7 +9,6 @@ export const envVars = createEnvVars({
   APP_PORT: 'APP_PORT',
   SALT_ROUNDS: 'SALT_ROUNDS',
   CIPER_SALT: 'CIPER_SALT',
-  CIPER_BITES: 'CIPER_BITES',
   CIPER_ALGORITHM: 'CIPER_ALGORITHM',
   PASSWORD_PEPPER: 'PASSWORD_PEPPER',
 });
@@ -23,4 +22,6 @@ export const envVarValue = {
   [envVars.DB_DATABASE]: getEnvVars(envVars.DB_DATABASE),
   [envVars.SALT_ROUNDS]: Number(getEnvVars(envVars.SALT_ROUNDS)),
   [envVars.PASSWORD_PEPPER]: getEnvVars(envVars.PASSWORD_PEPPER),
+  [envVars.CIPER_ALGORITHM]: getEnvVars(envVars.CIPER_ALGORITHM),
+  [envVars.CIPER_SALT]: getEnvVars(envVars.CIPER_SALT),
 };
