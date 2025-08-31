@@ -6,8 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
+import { Password } from './password.entity';
 
-@Entity()
+@Entity('personnel')
 export class Personnel {
   // id SMALLSERIAL PRIMARY KEY,
   @PrimaryGeneratedColumn('increment', { type: 'smallint' })
@@ -17,10 +18,14 @@ export class Personnel {
   @Column({ type: 'varchar', length: 255, unique: true, nullable: false })
   email: string;
 
-  // password CHAR(60) NOT NULL,
-  @Column({ type: 'varchar', length: 60, nullable: false })
-  password: string;
-
+  // password_id INTEGER NOT NULL REFERENCES passwords (id),
+  @OneToOne(() => Password, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'password_id' })
+  password: Password;
   //  phone VARCHAR(255),
 
   @Column({ type: 'varchar', length: 255, default: null })
@@ -51,14 +56,14 @@ export class Personnel {
   picture: string | null;
 
   //role_id VARCHAR(10) REFERENCES roles (id)
-  // @Column({ default: null })
-  // role_id: string;
+  @Column({ type: 'varchar', length: 20 })
+  role_id: string;
 
   @OneToOne(() => Role, {
     nullable: true,
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'role_id' })
   role: Role | null;
 }

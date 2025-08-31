@@ -99,13 +99,17 @@ VALUES
 ('employee', 'employee:info')
 ON CONFLICT (role_id, permit_id) DO NOTHING;
 
-
+CREATE TABLE IF NOT EXISTS passwords(
+  id SERIAL PRIMARY KEY,
+  password CHAR(60) NOT NULL,
+  salt CHAR(29) NOT NULL
+);
 
 -- Create table persons
 CREATE TABLE IF NOT EXISTS personnel (
   id SMALLSERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
-  password CHAR(60) NOT NULL,
+  password_id INTEGER NOT NULL REFERENCES passwords (id),
   phone VARCHAR(255),
   name VARCHAR(255),
   surname VARCHAR(255),
@@ -115,6 +119,10 @@ CREATE TABLE IF NOT EXISTS personnel (
   picture VARCHAR(255), -- url on picture
   role_id VARCHAR(20) REFERENCES roles (id)
 );
+
+CREATE UNIQUE INDEX one_owner_per_role  
+ON personnel (role_id)
+WHERE role_id = 'owner';
 
 COMMENT ON TABLE personnel IS 'Storage info about personnel of restorant.';
 COMMENT on COLUMN personnel.role_id IS 'role off user for permits';

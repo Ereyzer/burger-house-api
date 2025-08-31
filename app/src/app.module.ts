@@ -11,6 +11,7 @@ import { PermitInRole } from './modules/roles/entities/permitInRole.entity';
 import { Personnel } from './modules/personnel/entities/personnel.entity';
 import Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
+import { Password } from './modules/personnel/entities/password.entity';
 
 @Module({
   imports: [
@@ -24,6 +25,13 @@ import { ConfigModule } from '@nestjs/config';
         [envVars.DB_PASSWORD]: Joi.string().required(),
         [envVars.DB_HOST]: Joi.string().required(),
         [envVars.DB_PORT]: Joi.string().required(),
+        [envVars.SALT_ROUNDS]: Joi.string()
+          .pattern(new RegExp(/^[0-9]*$/))
+          .required(),
+        [envVars.CIPER_SALT]: Joi.string().required(),
+        [envVars.CIPER_BITES]: Joi.string().required(),
+        [envVars.CIPER_ALGORITHM]: Joi.string().required(),
+        [envVars.PASSWORD_PEPPER]: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -33,7 +41,7 @@ import { ConfigModule } from '@nestjs/config';
       username: envVarValue[envVars.DB_USERNAME],
       password: envVarValue[envVars.DB_PASSWORD],
       database: envVarValue[envVars.DB_DATABASE],
-      entities: [Permit, Role, PermitInRole, Personnel],
+      entities: [Permit, Role, PermitInRole, Personnel, Password],
       synchronize: false,
     }),
 

@@ -83,6 +83,10 @@ export class RolesService {
     });
   }
 
+  findOneById(id: string): Promise<Role | null> {
+    return this.roleRepository.findOneBy({ id });
+  }
+
   async findOne(
     id: string,
   ): Promise<({ permits: string[] } & Omit<Role, 'permits'>) | undefined> {
