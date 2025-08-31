@@ -1,10 +1,14 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreatePersonnelDto } from './dto/create-personnel.dto';
-import { UpdatePersonnelDto } from './dto/update-personnel.dto';
+import {
+  UpdatePersonnelDto,
+  UpdatePersonnelEmailDto,
+} from './dto/update-personnel.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Personnel } from './entities/personnel.entity';
 import { Repository } from 'typeorm';
@@ -26,7 +30,7 @@ export class PersonnelService {
     email,
     password,
   }: CreatePersonnelDto): Promise<{ message: string }> {
-    const userNotExist = !(await this.persnnelRepository.findOneBy({ email }));
+    const userNotExist = !(await this.finOneByEmail(email));
 
     if (!userNotExist) throw new ConflictException('user already exist');
     const passwordPair =
@@ -39,10 +43,13 @@ export class PersonnelService {
       email,
       password: passwordStorage,
     });
-
-    await this.persnnelRepository.save(newUser);
-    // TODO: add sending email
-    return { message: `please check email: ${email}` };
+    try {
+      await this.persnnelRepository.save(newUser);
+      // TODO: add sending email
+      return { message: `please check email: ${email}` };
+    } catch (error) {
+      throw new InternalServerErrorException((error as Error).message);
+    }
   }
 
   findAll() {
@@ -87,7 +94,22 @@ export class PersonnelService {
 
   updateImage() {}
 
-  updateEmail() {}
+  async updateEmail({
+    email,
+    newEmail,
+  }: UpdatePersonnelEmailDto): Promise<{ message: string }> {
+    const user = await this.finOneByEmail(email);
+    if (!user) throw new NotFoundException('email not exist');
+    try {
+      await this.persnnelRepository.update(
+        { id: user.id },
+        { email: newEmail },
+      );
+      return { message: `check your email: ${newEmail}` };
+    } catch (error) {
+      throw new InternalServerErrorException((error as Error).message);
+    }
+  }
 
   updatePassword() {}
 

@@ -44,7 +44,9 @@ export class UpdatePersonnelDto {
 
 export class UpdatePersonnelEmailDto extends PickType(CreatePersonnelDto, [
   'email',
-] as const) {}
+] as const) {
+  newEmail: string;
+}
 
 export class UpdatePersonnelPasswordDto extends PickType(CreatePersonnelDto, [
   'password',

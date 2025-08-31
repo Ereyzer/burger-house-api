@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Put,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -35,15 +34,6 @@ export class RolesController {
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(id, updateRoleDto);
   }
-
-  @Put('picture/:id')
-  updatePicture() {}
-
-  @Put('email/:id')
-  updateEmail() {}
-
-  @Put('password/:id')
-  updatePassword() {}
 
   @Delete(':id')
   remove(@Param('id') id: string) {

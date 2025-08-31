@@ -8,10 +8,14 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Put,
 } from '@nestjs/common';
 import { PersonnelService } from './personnel.service';
 import { CreatePersonnelDto } from './dto/create-personnel.dto';
-import { UpdatePersonnelDto } from './dto/update-personnel.dto';
+import {
+  UpdatePersonnelDto,
+  UpdatePersonnelEmailDto,
+} from './dto/update-personnel.dto';
 
 @Controller('personnel')
 export class PersonnelController {
@@ -40,7 +44,18 @@ export class PersonnelController {
     return this.personnelService.update(+id, updatePersonnelDto);
   }
 
-  @Delete(':id')
+  @Put('picture/:id')
+  updatePicture() {}
+
+  @Put('email/:id')
+  updateEmail(@Body() updateEmailDto: UpdatePersonnelEmailDto) {
+    return this.personnelService.updateEmail(updateEmailDto);
+  }
+
+  @Put('password/:id')
+  updatePassword() {}
+
+  @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.personnelService.remove(+id);
