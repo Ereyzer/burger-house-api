@@ -71,11 +71,7 @@ export class CipherAndHash {
 
     const key = Buffer.from(envVarValue[envVars.CIPER_SALT], 'hex');
 
-    const cipher = crypto.createCipheriv(
-      envVarValue[envVars.CIPER_ALGORITHM],
-      key,
-      iv,
-    );
+    const cipher = crypto.createCipheriv('aes-256-ctr', key, iv);
     const encriypted = Buffer.concat([
       cipher.update(text, 'utf8'),
       cipher.final(),
@@ -88,11 +84,7 @@ export class CipherAndHash {
     const iv = Buffer.from(encryptIv, 'base64');
     const key = Buffer.from(envVarValue[envVars.CIPER_SALT], 'hex');
     const encriypt = Buffer.from(encryptText, 'base64');
-    const cipher = crypto.createDecipheriv(
-      envVarValue[envVars.CIPER_ALGORITHM],
-      key,
-      iv,
-    );
+    const cipher = crypto.createDecipheriv('aes-256-ctr', key, iv);
     const text = Buffer.concat([cipher.update(encriypt), cipher.final()]);
 
     return text.toString('utf8');

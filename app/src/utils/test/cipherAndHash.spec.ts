@@ -5,12 +5,10 @@ jest.mock('../../config/constants/env-constants', () => ({
     PASSWORD_PEPPER: 'my-test-secret-pepper-for-tests',
     CIPER_SALT:
       '5a5248f30b9817ed7c16e86528754e1ddc0d4446cfeb015e2cb6f31bb11c27fd',
-    CIPER_ALGORITHM: '',
   },
   envVars: {
     PASSWORD_PEPPER: 'PASSWORD_PEPPER',
     CIPER_SALT: 'CIPER_SALT',
-    CIPER_ALGORITHM: 'CIPER_ALGORITHM',
   },
 }));
 

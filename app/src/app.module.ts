@@ -25,11 +25,7 @@ import { Password } from './modules/personnel/entities/password.entity';
         [envVars.DB_PASSWORD]: Joi.string().required(),
         [envVars.DB_HOST]: Joi.string().required(),
         [envVars.DB_PORT]: Joi.string().required(),
-        [envVars.SALT_ROUNDS]: Joi.string()
-          .pattern(new RegExp(/^[0-9]*$/))
-          .required(),
         [envVars.CIPER_SALT]: Joi.string().required(),
-        [envVars.CIPER_ALGORITHM]: Joi.string().required(),
         [envVars.PASSWORD_PEPPER]: Joi.string().required(),
       }),
     }),
