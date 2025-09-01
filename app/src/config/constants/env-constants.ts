@@ -7,6 +7,8 @@ export const envVars = createEnvVars({
   DB_PASSWORD: 'DB_PASSWORD',
   DB_DATABASE: 'DB_DATABASE',
   APP_PORT: 'APP_PORT',
+  CIPER_SALT: 'CIPER_SALT',
+  PASSWORD_PEPPER: 'PASSWORD_PEPPER',
 });
 
 export const envVarValue = {
@@ -16,4 +18,6 @@ export const envVarValue = {
   [envVars.DB_USERNAME]: getEnvVars(envVars.DB_USERNAME),
   [envVars.DB_PASSWORD]: getEnvVars(envVars.DB_PASSWORD),
   [envVars.DB_DATABASE]: getEnvVars(envVars.DB_DATABASE),
+  [envVars.PASSWORD_PEPPER]: getEnvVars(envVars.PASSWORD_PEPPER),
+  [envVars.CIPER_SALT]: getEnvVars(envVars.CIPER_SALT),
 };
