@@ -110,12 +110,12 @@ CREATE TABLE IF NOT EXISTS personnel (
   id SMALLSERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_id INTEGER NOT NULL REFERENCES passwords (id),
-  phone VARCHAR(255),
-  name VARCHAR(255),
-  surname VARCHAR(255),
-  father_name VARCHAR(255),
+  enc_phone VARCHAR(255),
+  enc_name VARCHAR(255),
+  enc_surname VARCHAR(255),
+  enc_father_name VARCHAR(255),
   birthday DATE,
-  address VARCHAR(255),
+  enc_address VARCHAR(255),
   picture VARCHAR(255), -- url on picture
   role_id VARCHAR(20) REFERENCES roles (id)
 );

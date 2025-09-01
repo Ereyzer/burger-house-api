@@ -74,19 +74,19 @@ describe('paranoic', () => {
       expect(isMatch).toBe(false);
     });
   });
-  //TODO: how test and do not show algorytm
-  // describe('text encrypting and decrypting', () => {
-  //   const text = 'some text';
 
-  //   it('encrypt text', () => {
-  //     const encryptText = instance.encryptText(text);
+  describe('text encrypting and decrypting', () => {
+    const text = 'some text';
 
-  //     expect(typeof encryptText).toBe('string');
-  //     const decryptText = instance.decryptText(encryptText);
+    it('encrypt text', () => {
+      const encryptText = instance.encryptText(text);
 
-  //     expect(typeof decryptText).toBe('string');
+      expect(typeof encryptText).toBe('string');
+      const decryptText = instance.decryptText(encryptText);
 
-  //     expect(decryptText === text).toBe(true);
-  //   });
-  // });
+      expect(typeof decryptText).toBe('string');
+
+      expect(decryptText === text).toBe(true);
+    });
+  });
 });

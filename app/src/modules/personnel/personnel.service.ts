@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -11,10 +12,11 @@ import {
 } from './dto/update-personnel.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Personnel } from './entities/personnel.entity';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { RolesService } from '../roles/roles.service';
 import { Password } from './entities/password.entity';
 import { CipherAndHash } from '../../utils/CipherAndHash';
+import { defaultConstants } from '../../config/constants/default-constants';
 
 @Injectable()
 export class PersonnelService {
@@ -52,44 +54,52 @@ export class PersonnelService {
     }
   }
 
-  findAll() {
-    return this.persnnelRepository.find();
+  async findAll() {
+    return await this.persnnelRepository.find();
   }
 
   findOne(id: number) {
+    // TODO: next step
     return this.persnnelRepository.findOneBy({ id });
   }
 
-  finOneByEmail(email: string) {
-    return this.persnnelRepository.findOneBy({ email });
+  finOneByEmail(email: string, options: FindOneOptions<Personnel> = {}) {
+    return this.persnnelRepository.findOne({ ...options, where: { email } });
   }
 
   async update(
     id: number,
-    {
-      name,
-      surname,
-      father_name,
-      address,
-      phone,
-      birthday,
-      role,
-    }: UpdatePersonnelDto,
+    { role, ...updatePersonnel }: UpdatePersonnelDto,
   ): Promise<Personnel> {
     const user = await this.findOne(id);
     if (!user) throw new NotFoundException('user not exist');
-    if (name) user.name = name;
-    if (surname) user.surname = surname;
-    if (father_name) user.father_name = father_name;
-    if (address) user.address = address;
-    if (phone) user.phone = phone;
-    if (birthday) user.birthday = birthday;
+    Object.assign(user, updatePersonnel);
     if (role) {
+      if (user.role_id === defaultConstants.roles.OWNER) {
+        // TODO: console.log('add actions for change owner');
+        throw new BadRequestException('do not change owner');
+      }
       const isRole = await this.roleService.findOneById(role);
       if (!isRole) throw new NotFoundException('role not exist');
+
       user.role = isRole;
     }
-    return this.persnnelRepository.save(user);
+    try {
+      return await this.persnnelRepository.save(user);
+    } catch (error) {
+      console.log(error);
+      const { code, detail } = error as {
+        code: string;
+        detail: string;
+      } & Error;
+
+      if (
+        code === '23505' &&
+        detail === 'Key (role_id)=(owner) already exists.'
+      ) {
+        throw new BadRequestException('can be only one');
+      } else throw new InternalServerErrorException('error save');
+    }
   }
 
   updateImage() {}
@@ -115,9 +125,13 @@ export class PersonnelService {
 
   async remove(id: number) {
     const user = await this.findOne(id);
-    console.log(user);
+    if (!user) throw new BadRequestException('user not exist');
 
-    // if (user?.role === ) throw new BadRequestException('you can`t delete owner');
+    if (user.role_id === defaultConstants.roles.OWNER)
+      throw new BadRequestException('you can`t delete owner first change role');
+
+    await this.persnnelRepository.delete(id);
+
     return `This action removes a #${id} personnel`;
   }
 }
