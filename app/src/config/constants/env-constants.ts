@@ -9,6 +9,8 @@ export const envVars = createEnvVars({
   APP_PORT: 'APP_PORT',
   CIPER_SALT: 'CIPER_SALT',
   PASSWORD_PEPPER: 'PASSWORD_PEPPER',
+  JWT_SECRET_KEY: 'JWT_SECRET_KEY',
+  NODE_ENV: 'NODE_ENV',
 });
 
 export const envVarValue = {
@@ -20,4 +22,6 @@ export const envVarValue = {
   [envVars.DB_DATABASE]: getEnvVars(envVars.DB_DATABASE),
   [envVars.PASSWORD_PEPPER]: getEnvVars(envVars.PASSWORD_PEPPER),
   [envVars.CIPER_SALT]: getEnvVars(envVars.CIPER_SALT),
+  [envVars.JWT_SECRET_KEY]: getEnvVars(envVars.JWT_SECRET_KEY),
+  [envVars.NODE_ENV]: getEnvVars(envVars.NODE_ENV),
 };

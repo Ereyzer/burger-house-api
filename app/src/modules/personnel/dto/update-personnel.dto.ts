@@ -4,6 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDate,
   IsDecimal,
+  IsEmail,
   IsOptional,
   IsString,
   Length,
@@ -38,16 +39,22 @@ export class UpdatePersonnelDto {
   birthday: Date;
   @GeneralStringDecorator()
   address: string;
-  @GeneralDecorator()
-  role: string;
 }
 
 export class UpdatePersonnelEmailDto extends PickType(CreatePersonnelDto, [
   'email',
 ] as const) {
+  @ApiProperty()
+  @IsEmail()
   newEmail: string;
 }
 
 export class UpdatePersonnelPasswordDto extends PickType(CreatePersonnelDto, [
   'password',
 ] as const) {}
+
+export class UpdatePersonnelRoleDto {
+  @ApiProperty()
+  @IsString()
+  role: string;
+}

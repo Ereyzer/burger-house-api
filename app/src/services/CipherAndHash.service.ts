@@ -1,20 +1,11 @@
 import bcrypt, { compare, genSalt } from 'bcrypt';
 import { envVars, envVarValue } from '../config/constants/env-constants';
 import crypto from 'node:crypto';
+import { Injectable } from '@nestjs/common';
 
-export class CipherAndHash {
-  static #inctance: CipherAndHash | null = null;
+@Injectable()
+export class CipherAndHashService {
   readonly #WORCK_FACTOR = 10;
-
-  private constructor() {}
-
-  public static get instance(): CipherAndHash {
-    if (!CipherAndHash.#inctance) {
-      CipherAndHash.#inctance = new CipherAndHash();
-    }
-
-    return CipherAndHash.#inctance;
-  }
 
   public async createPasswordHashPair(
     newPassword: string,
@@ -22,10 +13,7 @@ export class CipherAndHash {
     const salt = await genSalt(12);
     const preparePassword = await this.preHash(newPassword, salt);
 
-    const password = await CipherAndHash.instance.createHash(
-      preparePassword,
-      this.#WORCK_FACTOR,
-    );
+    const password = await this.createHash(preparePassword, this.#WORCK_FACTOR);
     return { password, salt };
   }
 

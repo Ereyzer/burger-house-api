@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { OwnerModule } from './helpers/owner/owner.module';
 import { ModulesModule } from './modules/modules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envVars, envVarValue } from './config/constants/env-constants';
@@ -12,6 +11,8 @@ import { Personnel } from './modules/personnel/entities/personnel.entity';
 import Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
 import { Password } from './modules/personnel/entities/password.entity';
+import { AuthModule } from './modules/auth/auth.module';
+import { Session } from './modules/auth/entities/session.entity';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { Password } from './modules/personnel/entities/password.entity';
         [envVars.DB_PORT]: Joi.string().required(),
         [envVars.CIPER_SALT]: Joi.string().required(),
         [envVars.PASSWORD_PEPPER]: Joi.string().required(),
+        [envVars.JWT_SECRET_KEY]: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -36,12 +38,11 @@ import { Password } from './modules/personnel/entities/password.entity';
       username: envVarValue[envVars.DB_USERNAME],
       password: envVarValue[envVars.DB_PASSWORD],
       database: envVarValue[envVars.DB_DATABASE],
-      entities: [Permit, Role, PermitInRole, Personnel, Password],
+      entities: [Permit, Role, PermitInRole, Personnel, Password, Session],
       synchronize: false,
     }),
-
-    OwnerModule,
     ModulesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

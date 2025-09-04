@@ -41,7 +41,12 @@ INSERT INTO permits (id, display_name, description)
 VALUES
 ('personnel:add', 'Додати користовача', 'можливість додавати нових користовачів в таблицю personnel'),
 ('personnel:role', 'Оновлення ролі', 'можливість оновлювати ролі користувачів'),
-('personnel:info', 'Оновлення персональних даних', 'Можливість оновити персональні дані'),
+('personnel:info', 'інформація про одного працівника', NULL),
+('personnel:get-all', 'список усіх працівників', NULL),
+('personnel:delete', 'видалити працівника', NULL),
+('permits:info', 'інформація про перміт', NULL),
+('permits:get-all', 'список пермітів', NULL),
+('roles:operations', 'операції з ролями', 'поки що охоплює усі операції з ролями'),
 ('manager:info', 'Оновити менеджера', 'Можливість оновити персональні дані працівника з дозволом "manager"'),
 ('employee:add', 'Додати працівника', 'Можливість додати працівника з дозволом "employee"'),
 ('employee:info', 'Оновити працівника', 'Можливість оновити персональні дані працівника з дозволом "employee"'),
@@ -226,23 +231,23 @@ CREATE TABLE IF NOT EXISTS dishes_in_menu (
 
 COMMENT ON TABLE dishes_in_menu IS 'table for references, with dish in wich menu position';
 
-CREATE TABLE IF NOT EXISTS categiries (
+CREATE TABLE IF NOT EXISTS categories (
   id VARCHAR(20) PRIMARY KEY,
   display_name VARCHAR(20) NOT NULL,
-  description TEXT,
+  description TEXT
 );
 
-COMMENT ON TABLE categiries IS 'categiries for filter menu';
-COMMENT on COLUMN categiries.Id IS 'id is string like "drink", "vegeterian" or "spicy"';
+COMMENT ON TABLE categories IS 'categiries for filter menu';
+COMMENT on COLUMN categories.Id IS 'id is string like "drink", "vegeterian" or "spicy"';
 
 CREATE TABLE IF NOT EXISTS menu_in_categorie (
-  categirie_id VARCHAR(20) NOT NULL,
+  categorie_id VARCHAR(20) NOT NULL,
   menu_id INTEGER NOT NULL,
-  PRIMARY KEY (categirie_id, menu_id),
+  PRIMARY KEY (categorie_id, menu_id),
 
   CONSTRAINT fk_categorie
-  FOREIGN KEY (categirie_id)
-  REFERENCES categiries (id)
+  FOREIGN KEY (categorie_id)
+  REFERENCES categories (id)
   ON DELETE CASCADE ON UPDATE CASCADE,
 
   CONSTRAINT fk_menu
@@ -252,6 +257,20 @@ CREATE TABLE IF NOT EXISTS menu_in_categorie (
 );
 
 COMMENT ON TABLE menu_in_categorie IS 'this table explain wich dish in which categorie';
+
+-- TODO: sessions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS sessions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  personnel_id SMALLINT NOT NULL REFERENCES personnel (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  sas CHAR(32) NOT NULL,
+  srs CHAR(32) NOT NULL,
+  create_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  update_at TIMESTAMP NOT NULL DEFAULT NOW()
+ 
+);
+CREATE INDEX idx_sessions_sas_srs ON sessions (sas, srs);
 
 -- TODO: orders
 

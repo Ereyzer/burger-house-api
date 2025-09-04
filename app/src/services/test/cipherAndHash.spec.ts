@@ -1,4 +1,5 @@
-import { CipherAndHash } from '../CipherAndHash';
+import { Test, TestingModule } from '@nestjs/testing';
+import { CipherAndHashService } from '../CipherAndHash.service';
 
 jest.mock('../../config/constants/env-constants', () => ({
   envVarValue: {
@@ -13,45 +14,42 @@ jest.mock('../../config/constants/env-constants', () => ({
 }));
 
 describe('paranoic', () => {
-  let instance: CipherAndHash;
+  let service: CipherAndHashService;
 
-  beforeAll(() => {
-    instance = CipherAndHash.instance;
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [CipherAndHashService],
+    }).compile();
+    service = module.get<CipherAndHashService>(CipherAndHashService);
   });
 
-  describe('Singleton Pattern', () => {
+  describe('service defined', () => {
     it('should be defined', () => {
-      expect(instance).toBeDefined();
-    });
-
-    it('should return a single instance', () => {
-      // check if return the same instance
-      const secondInstance = CipherAndHash.instance;
-      expect(instance).toBe(secondInstance);
+      expect(service).toBeDefined();
     });
   });
 
   describe('Password Hashing and Checking', () => {
     const password = 'testPAssword123';
     it('should create a valid hash and correctly verify it', async () => {
-      const hash = await instance.createHash(password, 10);
+      const hash = await service.createHash(password, 10);
 
       expect(hash).toBeDefined();
       expect(typeof hash).toBe('string');
       expect(hash.length).toBe(60);
-      const isMatch = await instance.compareHash(password, hash);
+      const isMatch = await service.compareHash(password, hash);
       expect(isMatch).toBe(true);
     });
     it('should create random bites expectly length', () => {
-      const random = instance.generateSalt(5);
+      const random = service.generateSalt(5);
       expect(typeof random).toBe('string');
       expect(random.length).toBe(10);
-      expect(instance.generateSalt(12).length).toBe(24);
-      expect(instance.generateSalt(16).length).toBe(32);
+      expect(service.generateSalt(12).length).toBe(24);
+      expect(service.generateSalt(16).length).toBe(32);
     });
 
     it('should create a valid hash and correctly verify it', async () => {
-      const storedHash = await instance.createPasswordHashPair(password);
+      const storedHash = await service.createPasswordHashPair(password);
       expect(storedHash).toBeDefined();
       expect(typeof storedHash).toBe('object');
       expect(storedHash.password).toBeDefined();
@@ -61,13 +59,13 @@ describe('paranoic', () => {
       expect(storedHash.password.length).toBe(60);
       expect(storedHash.salt.length).toBe(29);
 
-      const isMatch = await instance.checkPassword(password, storedHash);
+      const isMatch = await service.checkPassword(password, storedHash);
       expect(isMatch).toBe(true);
     });
     it('should return false for an incorrect password', async () => {
       const incorrectPassword = 'wrongPassword';
-      const hashedPassword = await instance.createPasswordHashPair(password);
-      const isMatch = await instance.checkPassword(
+      const hashedPassword = await service.createPasswordHashPair(password);
+      const isMatch = await service.checkPassword(
         incorrectPassword,
         hashedPassword,
       );
@@ -79,10 +77,10 @@ describe('paranoic', () => {
     const text = 'some text';
 
     it('encrypt text', () => {
-      const encryptText = instance.encryptText(text);
+      const encryptText = service.encryptText(text);
 
       expect(typeof encryptText).toBe('string');
-      const decryptText = instance.decryptText(encryptText);
+      const decryptText = service.decryptText(encryptText);
 
       expect(typeof decryptText).toBe('string');
 

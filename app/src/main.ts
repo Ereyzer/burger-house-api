@@ -3,10 +3,14 @@ import { AppModule } from './app.module';
 import { envVars, envVarValue } from './config/constants/env-constants';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpStatus, ValidationPipe } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap(): Promise<void> {
   try {
     const app = await NestFactory.create(AppModule);
+
+    app.use(cookieParser());
+
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -18,6 +22,7 @@ async function bootstrap(): Promise<void> {
       .setTitle('Burger House API')
       .setDescription('Describe how the endpoints work')
       .setVersion('1.0.0')
+      .addBearerAuth()
       .addGlobalResponse({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         description: 'Internal server Error.',
