@@ -9,14 +9,15 @@ import { CreatePersonnelDto } from './dto/create-personnel.dto';
 import {
   UpdatePersonnelDto,
   UpdatePersonnelEmailDto,
+  UpdatePersonnelRoleDto,
 } from './dto/update-personnel.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Personnel } from './entities/personnel.entity';
 import { FindOneOptions, Repository } from 'typeorm';
 import { RolesService } from '../roles/roles.service';
 import { Password } from './entities/password.entity';
-import { CipherAndHash } from '../../utils/CipherAndHash';
 import { defaultConstants } from '../../config/constants/default-constants';
+import { CipherAndHashService } from '../../services/CipherAndHash.service';
 
 @Injectable()
 export class PersonnelService {
@@ -26,6 +27,7 @@ export class PersonnelService {
     @InjectRepository(Password)
     private readonly passwordRepository: Repository<Password>,
     private readonly roleService: RolesService,
+    private readonly cipher: CipherAndHashService,
   ) {}
 
   async create({
@@ -35,8 +37,7 @@ export class PersonnelService {
     const userNotExist = !(await this.finOneByEmail(email));
 
     if (!userNotExist) throw new ConflictException('user already exist');
-    const passwordPair =
-      await CipherAndHash.instance.createPasswordHashPair(password);
+    const passwordPair = await this.cipher.createPasswordHashPair(password);
 
     let passwordStorage = this.passwordRepository.create(passwordPair);
     passwordStorage = await this.passwordRepository.save(passwordStorage);
@@ -69,25 +70,22 @@ export class PersonnelService {
 
   async update(
     id: number,
-    { role, ...updatePersonnel }: UpdatePersonnelDto,
+    { ...updatePersonnel }: UpdatePersonnelDto,
   ): Promise<Personnel> {
     const user = await this.findOne(id);
     if (!user) throw new NotFoundException('user not exist');
     Object.assign(user, updatePersonnel);
-    if (role) {
-      if (user.role_id === defaultConstants.roles.OWNER) {
-        // TODO: console.log('add actions for change owner');
-        throw new BadRequestException('do not change owner');
-      }
-      const isRole = await this.roleService.findOneById(role);
-      if (!isRole) throw new NotFoundException('role not exist');
+    return await this.persnnelRepository.save(user);
+  }
 
-      user.role = isRole;
-    }
+  async updateRole(
+    id: number,
+    { role }: UpdatePersonnelRoleDto,
+  ): Promise<void> {
     try {
-      return await this.persnnelRepository.save(user);
+      await this.persnnelRepository.update(id, { role_id: role });
+      return;
     } catch (error) {
-      console.log(error);
       const { code, detail } = error as {
         code: string;
         detail: string;

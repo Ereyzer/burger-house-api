@@ -3,26 +3,19 @@ import { PersonnelModule } from './personnel/personnel.module';
 import { RouterModule } from '@nestjs/core';
 import { PermitsModule } from './permits/permits.module';
 import { RolesModule } from './roles/roles.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     PersonnelModule,
     PermitsModule,
     RolesModule,
+    AuthModule,
     RouterModule.register([
       {
         path: 'admin',
-        // module: PersonnelModule,
-        children: [PersonnelModule, PermitsModule, RolesModule],
+        children: [PersonnelModule, PermitsModule, RolesModule, AuthModule],
       },
-      // {
-      //   path: 'admin',
-      //   module: PermitsModule,
-      // },
-      // {
-      //   path: 'admin',
-      //   module: RolesModule,
-      // },
     ]),
   ],
 })

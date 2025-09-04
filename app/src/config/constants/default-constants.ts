@@ -1,3 +1,5 @@
+import time from './time-constants';
+
 const roles = {
   OWNER: 'owner',
   ADMIN: 'admin',
@@ -7,4 +9,5 @@ const roles = {
 
 export const defaultConstants = {
   roles,
+  time,
 };
