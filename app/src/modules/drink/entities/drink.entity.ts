@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AfterLoad, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 //   id SERIAL PRIMARY KEY,
 //   name VARCHAR(255) NOT NULL,
@@ -17,4 +17,9 @@ export class Drink {
   calories: number;
   @Column({ type: 'text' })
   description: string;
+
+  @AfterLoad()
+  priceToNumber() {
+    this.price = Number(this.price);
+  }
 }
