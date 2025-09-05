@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register owner</title>
+  </head>
+  <body>
+    <div
+      style="margin: auto; width: 350px; padding: 20px; background-color: blue"
+    >
+      <form
+        action="create/owner"
+        autocomplete="off"
+        name="owner"
+        style="display: flex; flex-direction: column; gap: 10px"
+      >
+        <label for="email">EMAIL</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          style="line-height: 30px; font-weight: 900; font-size: large"
+        />
+        <label for="password">PASSWORD</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          style="line-height: 30px; font-weight: 900; font-size: large"
+        />
+        <button type="submit" style="line-height: 30px">Register</button>
+      </form>
+    </div>
+  </body>
+</html>

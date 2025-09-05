@@ -30,8 +30,9 @@ export class PersonnelController {
 
   @RequirePermission(PermissionsEnum.PERSONNEL_ADD)
   @Post()
-  create(@Body() createPersonnelDto: CreatePersonnelDto) {
-    return this.personnelService.create(createPersonnelDto);
+  async create(@Body() createPersonnelDto: CreatePersonnelDto) {
+    await this.personnelService.create(createPersonnelDto);
+    return { message: `please check email: ${createPersonnelDto.email}` };
   }
 
   @RequirePermission(PermissionsEnum.PERSONNEL_GET_ALL)

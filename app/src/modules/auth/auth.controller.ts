@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/signIn-auth.dto';
@@ -53,5 +54,18 @@ export class AuthController {
     await this.authService.logout(at, rt);
 
     return;
+  }
+
+  @Get('register/owner')
+  async registerOwnerPage(@Res() res: Express.Response) {
+    const root = './src/public';
+    if (await this.authService.checkIfFirstTime())
+      return res.sendFile('register-owner.html', { root });
+    return res.sendFile('nice-try.html', { root });
+  }
+
+  @Get('register/create/owner')
+  createOwner(@Query() query: LoginAuthDto) {
+    return this.authService.createOwner(query);
   }
 }
