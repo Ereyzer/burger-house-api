@@ -5,13 +5,10 @@ import { PermitsModule } from './permits/permits.module';
 import { RolesModule } from './roles/roles.module';
 import { AuthModule } from './auth/auth.module';
 import { AboutModule } from './about/about.module';
+import { DrinkModule } from './drink/drink.module';
 
 @Module({
   imports: [
-    PersonnelModule,
-    PermitsModule,
-    RolesModule,
-    AuthModule,
     RouterModule.register([
       {
         path: 'admin',
@@ -21,10 +18,16 @@ import { AboutModule } from './about/about.module';
           RolesModule,
           AuthModule,
           AboutModule,
+          DrinkModule,
         ],
       },
     ]),
+    PersonnelModule,
+    PermitsModule,
+    RolesModule,
+    AuthModule,
     AboutModule,
+    DrinkModule,
   ],
 })
 export class ModulesModule {}
