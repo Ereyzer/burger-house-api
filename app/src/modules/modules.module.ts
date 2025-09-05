@@ -4,6 +4,7 @@ import { RouterModule } from '@nestjs/core';
 import { PermitsModule } from './permits/permits.module';
 import { RolesModule } from './roles/roles.module';
 import { AuthModule } from './auth/auth.module';
+import { AboutModule } from './about/about.module';
 
 @Module({
   imports: [
@@ -14,9 +15,16 @@ import { AuthModule } from './auth/auth.module';
     RouterModule.register([
       {
         path: 'admin',
-        children: [PersonnelModule, PermitsModule, RolesModule, AuthModule],
+        children: [
+          PersonnelModule,
+          PermitsModule,
+          RolesModule,
+          AuthModule,
+          AboutModule,
+        ],
       },
     ]),
+    AboutModule,
   ],
 })
 export class ModulesModule {}

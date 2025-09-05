@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Password } from './modules/personnel/entities/password.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import { Session } from './modules/auth/entities/session.entity';
+import { About } from './modules/about/entities/about.entity';
 
 @Module({
   imports: [
@@ -38,7 +39,15 @@ import { Session } from './modules/auth/entities/session.entity';
       username: envVarValue[envVars.DB_USERNAME],
       password: envVarValue[envVars.DB_PASSWORD],
       database: envVarValue[envVars.DB_DATABASE],
-      entities: [Permit, Role, PermitInRole, Personnel, Password, Session],
+      entities: [
+        Permit,
+        Role,
+        PermitInRole,
+        Personnel,
+        Password,
+        Session,
+        About,
+      ],
       synchronize: false,
     }),
     ModulesModule,

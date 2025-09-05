@@ -39,9 +39,9 @@ export class AuthService {
         picture: true,
       },
     });
-    if (!user) throw new UnauthorizedException('here');
+    if (!user) throw new UnauthorizedException();
     if (!(await this.cipher.checkPassword(password, user.password)))
-      throw new UnauthorizedException('orhere');
+      throw new UnauthorizedException();
 
     const sas = this.cipher.generateSalt(16);
     const at = this.tokenJob.createJwtToken({

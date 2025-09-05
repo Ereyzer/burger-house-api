@@ -26,4 +26,6 @@ export enum PermissionsEnum {
   // ROLE_UPDATE = 'role:update',
   // ROLE_INFO = 'role:info',
   // ROLE_DELETE = 'role:delete'
+  ABOUT_GET = 'about:get',
+  ABOUT_UPDATE = 'about:update',
 }
