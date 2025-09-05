@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateDrinkDto } from './dto/create-drink.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Drink } from './entities/drink.entity';
@@ -12,9 +12,16 @@ export class DrinkService {
     private readonly drinkRepository: Repository<Drink>,
   ) {}
 
-  create(createDrinkDto: CreateDrinkDto) {
-    const drink = this.drinkRepository.create(createDrinkDto);
-    return this.drinkRepository.save(drink);
+  async create(createDrinkDto: CreateDrinkDto) {
+    try {
+      const drink = this.drinkRepository.create(createDrinkDto);
+      return await this.drinkRepository.save(drink);
+    } catch (error) {
+      const { code } = error as { code: string } & Error;
+      if (code === '23505') {
+        throw new ConflictException('drink alredy exist');
+      }
+    }
   }
 
   findAll() {

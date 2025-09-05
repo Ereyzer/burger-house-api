@@ -6,6 +6,7 @@ import { RolesModule } from './roles/roles.module';
 import { AuthModule } from './auth/auth.module';
 import { AboutModule } from './about/about.module';
 import { DrinkModule } from './drink/drink.module';
+import { DishModule } from './dish/dish.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DrinkModule } from './drink/drink.module';
           AuthModule,
           AboutModule,
           DrinkModule,
+          DishModule,
         ],
       },
     ]),
@@ -28,6 +30,7 @@ import { DrinkModule } from './drink/drink.module';
     AuthModule,
     AboutModule,
     DrinkModule,
+    DishModule,
   ],
 })
 export class ModulesModule {}
