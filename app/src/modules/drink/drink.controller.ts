@@ -38,7 +38,7 @@ export class DrinkController {
   }
 
   @RequirePermission(PermissionsEnum.DRINK_UPDATE)
-  @Patch(':id')
+  @Patch('price/:id')
   updatePrice(
     @Param('id') id: string,
     @Body() updatePrice: UpdateDrinkPriceDto,

@@ -159,7 +159,7 @@ COMMENT ON COLUMN about.about_description IS 'detailed company description.';
 
 CREATE TABLE IF NOT EXISTS drinks(
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL UNIQUE,
   price DECIMAL(5, 2) NOT NULL,
   calories SMALLINT NOT NULL,
   description TEXT
@@ -172,7 +172,7 @@ COMMENT ON COLUMN drinks.price IS 'Max price is 999.99';
 CREATE TABLE IF NOT EXISTS dishes (
   id SERIAL PRIMARY KEY,
   price DECIMAL(5, 2) NOT NULL,
-  name VARCHAR(255) NOT NULL
+  name VARCHAR(255) NOT NULL UNIQUE
 );
 
 COMMENT ON TABLE dishes IS 'there is dishes we can chse for menu';
