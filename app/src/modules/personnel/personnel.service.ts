@@ -30,10 +30,7 @@ export class PersonnelService {
     private readonly cipher: CipherAndHashService,
   ) {}
 
-  async create({
-    email,
-    password,
-  }: CreatePersonnelDto): Promise<{ message: string }> {
+  async create({ email, password }: CreatePersonnelDto): Promise<Personnel> {
     const userNotExist = !(await this.finOneByEmail(email));
 
     if (!userNotExist) throw new ConflictException('user already exist');
@@ -47,9 +44,9 @@ export class PersonnelService {
       password: passwordStorage,
     });
     try {
-      await this.persnnelRepository.save(newUser);
+      const user = await this.persnnelRepository.save(newUser);
       // TODO: add sending email
-      return { message: `please check email: ${email}` };
+      return user;
     } catch (error) {
       throw new InternalServerErrorException((error as Error).message);
     }

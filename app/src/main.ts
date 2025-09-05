@@ -4,10 +4,14 @@ import { envVars, envVarValue } from './config/constants/env-constants';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap(): Promise<void> {
   try {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    app.useStaticAssets(join(__dirname, '..', 'public'));
+    console.log(join(__dirname, '..', 'public'));
 
     app.use(cookieParser());
 

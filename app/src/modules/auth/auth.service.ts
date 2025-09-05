@@ -150,4 +150,25 @@ export class AuthService {
       return;
     }
   }
+
+  async checkIfFirstTime(): Promise<boolean> {
+    const users = await this.personnelService.findAll();
+    if (!users || users.length === 0) return true;
+    return false;
+  }
+
+  async createOwner({ email, password }: LoginAuthDto): Promise<string> {
+    const user = await this.personnelService.create({ email, password });
+    if (!user) throw new InternalServerErrorException();
+
+    try {
+      await this.personnelService.updateRole(user.id, {
+        role: defaultConstants.roles.OWNER,
+      });
+      return 'You is owner now, check your email';
+    } catch {
+      await this.personnelService.remove(user.id);
+      throw new InternalServerErrorException();
+    }
+  }
 }
