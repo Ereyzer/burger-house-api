@@ -52,6 +52,12 @@ VALUES
 ('drink:add', 'Додати напій', NULL),
 ('drink:update', 'Оновити ціну напою', NULL),
 ('drink:delete', 'Видалити напій', NULL),
+('dish:add', 'Додати страву', NULL),
+('dish:update', 'Оновити страву', NULL),
+('dish:delete', 'Видалити страву', NULL),
+('category:add', 'Додати категорію', NULL),
+('category:update', 'Оновити категорію', NULL),
+('category:delete', 'Видалити категорію', NULL),
 ('manager:info', 'Оновити менеджера', 'Можливість оновити персональні дані працівника з дозволом "manager"'),
 ('employee:add', 'Додати працівника', 'Можливість додати працівника з дозволом "employee"'),
 ('employee:info', 'Оновити працівника', 'Можливість оновити персональні дані працівника з дозволом "employee"'),
@@ -60,9 +66,6 @@ VALUES
 ('menu:delete', 'Видалити позицію ', 'Можливість видалити з меню'),
 ('menu:update', 'Оновити позицію', 'Можливість оновити інформацію про позицію меню'),
 ('menu:onboard', 'Статус позиції', 'Можливість змінити статус наявності позиції меню'),
-('dish:add', 'Додати страву', NULL),
-('dish:update', 'Оновити страву', NULL),
-('dish:delete', 'Видалити страву', NULL)
 ON CONFLICT (id) DO NOTHING; 
 
 CREATE TABLE IF NOT EXISTS permit_in_role (
@@ -242,13 +245,13 @@ CREATE TABLE IF NOT EXISTS categories (
 COMMENT ON TABLE categories IS 'categiries for filter menu';
 COMMENT on COLUMN categories.Id IS 'id is string like "drink", "vegeterian" or "spicy"';
 
-CREATE TABLE IF NOT EXISTS menu_in_categorie (
-  categorie_id VARCHAR(20) NOT NULL,
+CREATE TABLE IF NOT EXISTS menu_in_category (
+  category_id VARCHAR(20) NOT NULL,
   menu_id INTEGER NOT NULL,
-  PRIMARY KEY (categorie_id, menu_id),
+  PRIMARY KEY (category_id, menu_id),
 
-  CONSTRAINT fk_categorie
-  FOREIGN KEY (categorie_id)
+  CONSTRAINT fk_category
+  FOREIGN KEY (category_id)
   REFERENCES categories (id)
   ON DELETE CASCADE ON UPDATE CASCADE,
 
@@ -258,7 +261,7 @@ CREATE TABLE IF NOT EXISTS menu_in_categorie (
   ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-COMMENT ON TABLE menu_in_categorie IS 'this table explain wich dish in which categorie';
+COMMENT ON TABLE menu_in_category IS 'this table explain wich dish in which category';
 
 -- TODO: sessions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

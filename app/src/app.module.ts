@@ -16,6 +16,7 @@ import { Session } from './modules/auth/entities/session.entity';
 import { About } from './modules/about/entities/about.entity';
 import { Drink } from './modules/drink/entities/drink.entity';
 import { Dish } from './modules/dish/entities/dish.entity';
+import { Category } from './modules/categories/entities/category.entity';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { Dish } from './modules/dish/entities/dish.entity';
         About,
         Drink,
         Dish,
+        Category,
       ],
       synchronize: false,
     }),
