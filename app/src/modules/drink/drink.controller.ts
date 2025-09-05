@@ -6,6 +6,8 @@ import {
   Param,
   Delete,
   Patch,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { DrinkService } from './drink.service';
 import { CreateDrinkDto } from './dto/create-drink.dto';
@@ -46,7 +48,9 @@ export class DrinkController {
 
   @RequirePermission(PermissionsEnum.DRINK_DELETE)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.drinkService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string) {
+    await this.drinkService.remove(+id);
+    return;
   }
 }
