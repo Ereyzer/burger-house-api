@@ -14,6 +14,7 @@ import { Password } from './modules/personnel/entities/password.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import { Session } from './modules/auth/entities/session.entity';
 import { About } from './modules/about/entities/about.entity';
+import { Drink } from './modules/drink/entities/drink.entity';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { About } from './modules/about/entities/about.entity';
         Password,
         Session,
         About,
+        Drink,
       ],
       synchronize: false,
     }),

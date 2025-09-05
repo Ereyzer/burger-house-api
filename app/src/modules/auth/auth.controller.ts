@@ -38,8 +38,20 @@ export class AuthController {
 
   @ApiCookieAuth()
   @Get('refresh')
-  refresh(@Bearer('at') at: string, @Cookie('rt') rt: string) {
-    return this.authService.refresh(at, rt);
+  async refresh(
+    @Bearer('at') oldAt: string,
+    @Cookie('rt') oldRt: string,
+    @Res({ passthrough: true }) res: Express.Response,
+  ) {
+    const { at, rt } = await this.authService.refresh(oldAt, oldRt);
+
+    res.cookie('rt', rt, {
+      httpOnly: true,
+      secure: true,
+      maxAge: defaultConstants.time.ONE_DAY,
+      sameSite: envVarValue[envVars.NODE_ENV] ? 'none' : 'lax',
+    });
+    return { at };
   }
 
   @ApiCookieAuth()

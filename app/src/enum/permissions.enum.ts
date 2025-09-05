@@ -7,6 +7,11 @@ export enum PermissionsEnum {
   PERMITS_GET_ALL = 'permits:get-all',
   PERMITS_INFO = 'permits:info',
   ROLE_OPERATIONS = 'roles:operations',
+  ABOUT_GET = 'about:get',
+  ABOUT_UPDATE = 'about:update',
+  DRINK_ADD = 'drink:add',
+  DRINK_UPDATE = 'drink:update',
+  DRINK_DELETE = 'drink:delete',
   MANAGER_INFO = 'manager:info',
   EMPLOYEE_ADD = 'employee:add',
   EMPLOYEE_INFO = 'employee:info',
@@ -15,9 +20,6 @@ export enum PermissionsEnum {
   MENU_UPDATE = 'menu:update',
   MENU_DELETE = 'menu:delete',
   MENU_ONBOARD = 'menu:onboard',
-  DRINK_ADD = 'drink:add',
-  DRINK_UPDATE = 'drink:update',
-  DRINK_DELETE = 'drink:delete',
   DISH_ADD = 'dish:add',
   DISH_UPDATE = 'dish:update',
   DISH_DELETE = 'dish:delete',
@@ -26,6 +28,4 @@ export enum PermissionsEnum {
   // ROLE_UPDATE = 'role:update',
   // ROLE_INFO = 'role:info',
   // ROLE_DELETE = 'role:delete'
-  ABOUT_GET = 'about:get',
-  ABOUT_UPDATE = 'about:update',
 }
