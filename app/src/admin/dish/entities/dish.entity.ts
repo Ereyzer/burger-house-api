@@ -5,7 +5,7 @@ import { AfterLoad, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 //   name VARCHAR(255) NOT NULL
 @Entity('dishes')
 export class Dish {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+  @PrimaryGeneratedColumn('increment', { type: 'integer' })
   id: number;
   @Column({ type: 'decimal', precision: 5, scale: 2, nullable: false })
   price: number;

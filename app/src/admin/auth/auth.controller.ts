@@ -43,7 +43,7 @@ export class AuthController {
     @Cookie('rt') oldRt: string,
     @Res({ passthrough: true }) res: Express.Response,
   ) {
-    const { at, rt } = await this.authService.refresh(oldAt, oldRt);
+    const { at, rt, user } = await this.authService.refresh(oldAt, oldRt);
 
     res.cookie('rt', rt, {
       httpOnly: true,
@@ -51,7 +51,7 @@ export class AuthController {
       maxAge: defaultConstants.time.ONE_DAY,
       sameSite: envVarValue[envVars.NODE_ENV] ? 'none' : 'lax',
     });
-    return { at };
+    return { at, user };
   }
 
   @ApiCookieAuth()

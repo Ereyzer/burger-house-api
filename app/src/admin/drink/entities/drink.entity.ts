@@ -7,7 +7,7 @@ import { AfterLoad, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 //   description TEXT
 @Entity('drinks')
 export class Drink {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+  @PrimaryGeneratedColumn('increment', { type: 'integer' })
   id: number;
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   name: string;

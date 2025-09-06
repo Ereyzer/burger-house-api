@@ -180,17 +180,21 @@ CREATE TABLE IF NOT EXISTS dishes (
 
 COMMENT ON TABLE dishes IS 'there is dishes we can chse for menu';
 
-CREATE TABLE IF NOT EXISTS menu (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL UNIQUE,
-  price DECIMAL(6,2) NOT NULL,
-  onboard BOOLEAN NOT NULL,
-  image_small VARCHAR(255),
-  image_medium VARCHAR(255),
-  description TEXT,
-  rating DECIMAL(3,2),
-  calories SMALLINT
-);
+  CREATE TABLE IF NOT EXISTS menu (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL ,
+    subtitle VARCHAR(255) NOT NULL DEFAULT '',
+    price DECIMAL(6,2) NOT NULL,
+    onboard BOOLEAN NOT NULL,
+    image_small VARCHAR(255),
+    image_medium VARCHAR(255),
+    description TEXT,
+    rating DECIMAL(3,2),
+    calories SMALLINT,
+
+    CONSTRAINT menu_title_subtitle_name
+    UNIQUE (title, subtitle)
+  );
 
 COMMENT ON TABLE menu IS 'there you can comdine dishes and drinks to some menu positions';
 COMMENT ON COLUMN menu.price IS 'max price is 9999.99';
