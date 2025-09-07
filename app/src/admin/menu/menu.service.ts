@@ -5,7 +5,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { AddDrinkInMenuDto, UpdateMenuDto } from './dto/update-menu.dto';
+import {
+  AddDishInMenuDto,
+  AddDrinkInMenuDto,
+  UpdateMenuDto,
+} from './dto/update-menu.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from './entities/menu.entity';
 import { Repository } from 'typeorm';
@@ -13,6 +17,8 @@ import { CategoriesService } from '../categories/categories.service';
 import { MenuInCategory } from './entities/menu-in-category.entity';
 import { DrinkInMenu } from './entities/drink-in-menu.entity';
 import { DrinkService } from '../drink/drink.service';
+import { DishService } from '../dish/dish.service';
+import { DishInMenu } from './entities/dish-in-menu.entity';
 
 @Injectable()
 export class MenuService {
@@ -23,20 +29,29 @@ export class MenuService {
     private readonly menuInCategoryRepository: Repository<MenuInCategory>,
     @InjectRepository(DrinkInMenu)
     private readonly drinkInMenuRepository: Repository<DrinkInMenu>,
+    @InjectRepository(DishInMenu)
+    private readonly dishInMenuRepository: Repository<DishInMenu>,
     private readonly categoryService: CategoriesService,
     private readonly drinkService: DrinkService,
+    private readonly dishService: DishService,
   ) {}
 
   async create({
     categories = [],
     drinks = [],
+    dishes = [],
     ...createMenuDto
   }: CreateMenuDto) {
     try {
       const item = this.menuRepository.create(createMenuDto);
       const categoryEntities = await this.categoryService.findMany(categories);
       item.categories = categoryEntities;
-      const drinkItems = await this.drinkService.findMany(drinks);
+      const [drinkItems, dishItems] = await Promise.all([
+        this.drinkService.findMany(drinks),
+        this.dishService.findMany(dishes),
+      ]);
+
+      item.dishes = dishItems;
       item.drinks = drinkItems;
       const menuItem = await this.menuRepository.save(item);
       return menuItem;
@@ -65,7 +80,7 @@ export class MenuService {
   findOne(id: number) {
     return this.menuRepository.findOne({
       where: { id },
-      relations: { categories: true, drinks: true },
+      relations: { categories: true, drinks: true, dishes: true },
     });
   }
 
@@ -91,16 +106,21 @@ export class MenuService {
     });
   }
 
-  addDrinks(menu_id: number, { drink: drink_id }: AddDrinkInMenuDto) {
+  addDrink(menu_id: number, { drink: drink_id }: AddDrinkInMenuDto) {
     const drink = this.drinkInMenuRepository.create({ menu_id, drink_id });
     return this.drinkInMenuRepository.save(drink);
   }
-  rmDrinks(menu_id: number, drink_id: number) {
+  rmDrink(menu_id: number, drink_id: number) {
     return this.drinkInMenuRepository.delete({ menu_id, drink_id });
   }
 
-  addDishes() {}
-  rmDishes() {}
+  addDish(menu_id: number, { dish: dish_id }: AddDishInMenuDto) {
+    const drink = this.dishInMenuRepository.create({ menu_id, dish_id });
+    return this.dishInMenuRepository.save(drink);
+  }
+  rmDish(menu_id: number, dish_id: number) {
+    return this.dishInMenuRepository.delete({ menu_id, dish_id });
+  }
 
   updateImages() {}
 

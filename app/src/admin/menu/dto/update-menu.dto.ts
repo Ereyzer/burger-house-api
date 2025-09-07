@@ -4,7 +4,7 @@ import { GeneralPropertyDecoratorMaker } from '../../../utils/propertyDecoratorA
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateMenuDto extends PartialType(
-  OmitType(CreateMenuDto, ['categories', 'drinks'] as const),
+  OmitType(CreateMenuDto, ['categories', 'drinks', 'dishes'] as const),
 ) {}
 
 const GeneralStringOptional = GeneralPropertyDecoratorMaker(
@@ -24,4 +24,10 @@ export class AddDrinkInMenuDto {
   @ApiProperty()
   @IsNumber()
   drink: number;
+}
+
+export class AddDishInMenuDto {
+  @ApiProperty()
+  @IsNumber()
+  dish: number;
 }

@@ -3,7 +3,7 @@ import { CreateDishDto } from './dto/create-dish.dto';
 import { UpdateDishDto, UpdateDishPriceDto } from './dto/update-dish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dish } from './entities/dish.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class DishService {
@@ -32,6 +32,10 @@ export class DishService {
   // TODO: with relations
   findOne(id: number) {
     return `This action returns a #${id} dish`;
+  }
+
+  findMany(ids: number[]): Promise<Dish[]> {
+    return this.dishRepository.find({ where: { id: In(ids) } });
   }
 
   // TODO: relations

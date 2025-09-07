@@ -7,12 +7,15 @@ import { CategoriesModule } from '../categories/categories.module';
 import { MenuInCategory } from './entities/menu-in-category.entity';
 import { DrinkInMenu } from './entities/drink-in-menu.entity';
 import { DrinkModule } from '../drink/drink.module';
+import { DishInMenu } from './entities/dish-in-menu.entity';
+import { DishModule } from '../dish/dish.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Menu, MenuInCategory, DrinkInMenu]),
+    TypeOrmModule.forFeature([Menu, MenuInCategory, DrinkInMenu, DishInMenu]),
     CategoriesModule,
     DrinkModule,
+    DishModule,
   ],
   controllers: [MenuController],
   providers: [MenuService],

@@ -13,7 +13,11 @@ import {
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { AddDrinkInMenuDto, UpdateMenuDto } from './dto/update-menu.dto';
+import {
+  AddDishInMenuDto,
+  AddDrinkInMenuDto,
+  UpdateMenuDto,
+} from './dto/update-menu.dto';
 import { AuthWithBearerToken } from '../../decorators/authWithBearerToken.decorator';
 import { RequirePermission } from '../../decorators/requiredPermission.decorator';
 import { PermissionsEnum } from '../../enum/permissions.enum';
@@ -66,24 +70,29 @@ export class MenuController {
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
   @Post('drinks/:id')
   addDrinks(@Param('id') id: string, @Body() drink: AddDrinkInMenuDto) {
-    return this.menuService.addDrinks(+id, drink);
+    return this.menuService.addDrink(+id, drink);
   }
 
   @Delete('drinks/:id')
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
   @HttpCode(HttpStatus.NO_CONTENT)
   async rmDrinks(@Param('id') id: string, @Query('drink') drink: string) {
-    await this.menuService.rmDrinks(+id, +drink);
+    await this.menuService.rmDrink(+id, +drink);
     return;
   }
 
   @Post('dishes/:id')
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
-  addDishes() {}
+  addDishes(@Param('id') id: string, @Body('dish') dish: AddDishInMenuDto) {
+    return this.menuService.addDish(+id, dish);
+  }
 
   @Delete('dishes/:id')
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
-  rmDishes() {}
+  async rmDishes(@Param('id') id: string, @Query('dish') dish: string) {
+    await this.menuService.rmDish(+id, +dish);
+    return;
+  }
 
   @Post('images/:id')
   @RequirePermission(PermissionsEnum.MENU_UPDATE)

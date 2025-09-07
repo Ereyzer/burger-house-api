@@ -46,4 +46,8 @@ export class CreateMenuDto {
   @IsArray()
   @IsNumber({}, { each: true })
   drinks: number[];
+  @ApiProperty()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  dishes: number[];
 }
