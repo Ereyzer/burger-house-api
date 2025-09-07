@@ -6,10 +6,17 @@ import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { defaultConstants } from './config/constants/default-constants';
+import helmet from 'helmet';
 
 async function bootstrap(): Promise<void> {
   try {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    app.enableCors({
+      origin: [defaultConstants.domains.ADMIN, defaultConstants.domains.CLIENT],
+      credentials: true,
+    });
+    app.use(helmet());
     app.useStaticAssets(join(__dirname, '..', 'public'));
 
     app.use(cookieParser());
