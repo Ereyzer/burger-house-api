@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateDrinkDto } from './dto/create-drink.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Drink } from './entities/drink.entity';
-import { FindOneOptions, Repository, UpdateResult } from 'typeorm';
+import { FindOneOptions, In, Repository, UpdateResult } from 'typeorm';
 import { UpdateDrinkPriceDto } from './dto/update-drink.dto';
 
 @Injectable()
@@ -30,6 +30,10 @@ export class DrinkService {
 
   findOne(id: number, options: FindOneOptions<Drink> = {}) {
     return this.drinkRepository.findOne({ where: { id }, ...options });
+  }
+
+  findMany(ids: number[]) {
+    return this.drinkRepository.find({ where: { id: In(ids) } });
   }
 
   updatePrice(

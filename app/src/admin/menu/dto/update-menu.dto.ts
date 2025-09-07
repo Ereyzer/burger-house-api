@@ -1,10 +1,10 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { CreateMenuDto } from './create-menu.dto';
 import { GeneralPropertyDecoratorMaker } from '../../../utils/propertyDecoratorApplier';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateMenuDto extends PartialType(
-  OmitType(CreateMenuDto, ['categories'] as const),
+  OmitType(CreateMenuDto, ['categories', 'drinks'] as const),
 ) {}
 
 const GeneralStringOptional = GeneralPropertyDecoratorMaker(
@@ -18,4 +18,10 @@ export class UpdateMenuImagesDto {
   image_small?: string;
   @GeneralStringOptional()
   image_medium?: string;
+}
+
+export class AddDrinkInMenuDto {
+  @ApiProperty()
+  @IsNumber()
+  drink: number;
 }

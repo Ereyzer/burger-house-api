@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
+import { Drink } from '../../drink/entities/drink.entity';
 
 //   id SERIAL PRIMARY KEY,
 //   name VARCHAR(255) NOT NULL UNIQUE,
@@ -48,6 +49,14 @@ export class Menu {
     inverseJoinColumns: [{ name: 'category_id', referencedColumnName: 'id' }],
   })
   categories: Category[];
+
+  @ManyToMany(() => Drink, (drink) => drink.menu_items)
+  @JoinTable({
+    name: 'drinks_in_menu',
+    joinColumns: [{ name: 'menu_id', referencedColumnName: 'id' }],
+    inverseJoinColumns: [{ name: 'drink_id', referencedColumnName: 'id' }],
+  })
+  drinks: Drink[];
 
   @AfterLoad()
   priceToNumber() {

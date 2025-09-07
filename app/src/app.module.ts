@@ -19,6 +19,7 @@ import { Dish } from './admin/dish/entities/dish.entity';
 import { Category } from './admin/categories/entities/category.entity';
 import { Menu } from './admin/menu/entities/menu.entity';
 import { MenuInCategory } from './admin/menu/entities/menu-in-category.entity';
+import { DrinkInMenu } from './admin/menu/entities/drink-in-menu.entity';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { MenuInCategory } from './admin/menu/entities/menu-in-category.entity';
         Category,
         Menu,
         MenuInCategory,
+        DrinkInMenu,
       ],
       synchronize: false,
     }),

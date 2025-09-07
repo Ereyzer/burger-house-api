@@ -1,4 +1,11 @@
-import { AfterLoad, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  AfterLoad,
+  Column,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Menu } from '../../menu/entities/menu.entity';
 
 //   id SERIAL PRIMARY KEY,
 //   name VARCHAR(255) NOT NULL,
@@ -17,6 +24,9 @@ export class Drink {
   calories: number;
   @Column({ type: 'text' })
   description: string;
+
+  @ManyToMany(() => Menu, (menu) => menu.drinks)
+  menu_items: Menu[];
 
   @AfterLoad()
   priceToNumber() {

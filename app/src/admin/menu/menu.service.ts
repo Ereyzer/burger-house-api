@@ -5,12 +5,14 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { UpdateMenuDto } from './dto/update-menu.dto';
+import { AddDrinkInMenuDto, UpdateMenuDto } from './dto/update-menu.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from './entities/menu.entity';
 import { Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { MenuInCategory } from './entities/menu-in-category.entity';
+import { DrinkInMenu } from './entities/drink-in-menu.entity';
+import { DrinkService } from '../drink/drink.service';
 
 @Injectable()
 export class MenuService {
@@ -19,15 +21,25 @@ export class MenuService {
     private readonly menuRepository: Repository<Menu>,
     @InjectRepository(MenuInCategory)
     private readonly menuInCategoryRepository: Repository<MenuInCategory>,
+    @InjectRepository(DrinkInMenu)
+    private readonly drinkInMenuRepository: Repository<DrinkInMenu>,
     private readonly categoryService: CategoriesService,
+    private readonly drinkService: DrinkService,
   ) {}
 
-  async create({ categories = [], ...createMenuDto }: CreateMenuDto) {
+  async create({
+    categories = [],
+    drinks = [],
+    ...createMenuDto
+  }: CreateMenuDto) {
     try {
       const item = this.menuRepository.create(createMenuDto);
       const categoryEntities = await this.categoryService.findMany(categories);
       item.categories = categoryEntities;
-      return await this.menuRepository.save(item);
+      const drinkItems = await this.drinkService.findMany(drinks);
+      item.drinks = drinkItems;
+      const menuItem = await this.menuRepository.save(item);
+      return menuItem;
     } catch (error) {
       const { code, message } = error as { code: string } & Error;
       if (code === '23505') {
@@ -53,7 +65,7 @@ export class MenuService {
   findOne(id: number) {
     return this.menuRepository.findOne({
       where: { id },
-      relations: { categories: true },
+      relations: { categories: true, drinks: true },
     });
   }
 
@@ -71,15 +83,21 @@ export class MenuService {
     });
     return this.menuInCategoryRepository.save(relation);
   }
-  rmCategory(menuId: number, categoryId: string) {
+
+  rmCategory(menu_id: number, category_id: string) {
     return this.menuInCategoryRepository.delete({
-      menu_id: menuId,
-      category_id: categoryId,
+      menu_id,
+      category_id,
     });
   }
 
-  addDrinks() {}
-  rmDrinks() {}
+  addDrinks(menu_id: number, { drink: drink_id }: AddDrinkInMenuDto) {
+    const drink = this.drinkInMenuRepository.create({ menu_id, drink_id });
+    return this.drinkInMenuRepository.save(drink);
+  }
+  rmDrinks(menu_id: number, drink_id: number) {
+    return this.drinkInMenuRepository.delete({ menu_id, drink_id });
+  }
 
   addDishes() {}
   rmDishes() {}
