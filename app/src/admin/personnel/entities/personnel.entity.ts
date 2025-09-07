@@ -12,7 +12,7 @@ import { Password } from './password.entity';
 @Entity('personnel')
 export class Personnel {
   // id SMALLSERIAL PRIMARY KEY,
-  @PrimaryGeneratedColumn({ type: 'smallint' })
+  @PrimaryGeneratedColumn('increment', { type: 'smallint' })
   id: number;
 
   //   email VARCHAR(255) UNIQUE NOT NULL,

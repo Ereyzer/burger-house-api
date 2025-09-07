@@ -8,6 +8,7 @@ import { AboutModule } from './about/about.module';
 import { DrinkModule } from './drink/drink.module';
 import { DishModule } from './dish/dish.module';
 import { CategoriesModule } from './categories/categories.module';
+import { MenuModule } from './menu/menu.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CategoriesModule } from './categories/categories.module';
           DrinkModule,
           DishModule,
           CategoriesModule,
+          MenuModule,
         ],
       },
     ]),
@@ -34,6 +36,7 @@ import { CategoriesModule } from './categories/categories.module';
     DrinkModule,
     DishModule,
     CategoriesModule,
+    MenuModule,
   ],
 })
 export class ModulesModule {}

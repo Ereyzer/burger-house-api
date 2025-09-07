@@ -1,22 +1,26 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ModulesModule } from './modules/modules.module';
+import { ModulesModule } from './admin/modules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envVars, envVarValue } from './config/constants/env-constants';
-import { Permit } from './modules/permits/entities/permit.entity';
-import { Role } from './modules/roles/entities/role.entity';
-import { PermitInRole } from './modules/roles/entities/permitInRole.entity';
-import { Personnel } from './modules/personnel/entities/personnel.entity';
+import { Permit } from './admin/permits/entities/permit.entity';
+import { Role } from './admin/roles/entities/role.entity';
+import { PermitInRole } from './admin/roles/entities/permitInRole.entity';
+import { Personnel } from './admin/personnel/entities/personnel.entity';
 import Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
-import { Password } from './modules/personnel/entities/password.entity';
-import { AuthModule } from './modules/auth/auth.module';
-import { Session } from './modules/auth/entities/session.entity';
-import { About } from './modules/about/entities/about.entity';
-import { Drink } from './modules/drink/entities/drink.entity';
-import { Dish } from './modules/dish/entities/dish.entity';
-import { Category } from './modules/categories/entities/category.entity';
+import { Password } from './admin/personnel/entities/password.entity';
+import { AuthModule } from './admin/auth/auth.module';
+import { Session } from './admin/auth/entities/session.entity';
+import { About } from './admin/about/entities/about.entity';
+import { Drink } from './admin/drink/entities/drink.entity';
+import { Dish } from './admin/dish/entities/dish.entity';
+import { Category } from './admin/categories/entities/category.entity';
+import { Menu } from './admin/menu/entities/menu.entity';
+import { MenuInCategory } from './admin/menu/entities/menu-in-category.entity';
+import { DrinkInMenu } from './admin/menu/entities/drink-in-menu.entity';
+import { DishInMenu } from './admin/menu/entities/dish-in-menu.entity';
 
 @Module({
   imports: [
@@ -53,6 +57,10 @@ import { Category } from './modules/categories/entities/category.entity';
         Drink,
         Dish,
         Category,
+        Menu,
+        MenuInCategory,
+        DrinkInMenu,
+        DishInMenu,
       ],
       synchronize: false,
     }),

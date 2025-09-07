@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryColumn } from 'typeorm';
+import { Menu } from '../../menu/entities/menu.entity';
 
 //   id VARCHAR(20) PRIMARY KEY,
 //   display_name VARCHAR(20) NOT NULL,
@@ -12,4 +13,6 @@ export class Category {
   display_name: string;
   @Column({ type: 'text' })
   description: string;
+  @ManyToMany(() => Menu, (menu) => menu.calories)
+  menu: Menu[];
 }

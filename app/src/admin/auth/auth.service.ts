@@ -84,7 +84,9 @@ export class AuthService {
 
   async refresh(at: string, rt: string) {
     const refresh = this.tokenJob.check(rt);
+
     const access = this.tokenJob.decode(at);
+
     const session = await this.sessionRepository.findOne({
       where: {
         sas: access.s,
@@ -103,14 +105,14 @@ export class AuthService {
       secret: sas,
       role: session.personnel.role_id || undefined,
     });
-
     const srs = this.cipher.generateSalt(16);
-    at = this.tokenJob.createJwtToken({
+    rt = this.tokenJob.createJwtToken({
       sub: refresh.sub,
       tokenType: TokenPayloadEnum.REFRESH,
       secret: srs,
       role: session.personnel.role_id || undefined,
     });
+
     try {
       await this.sessionRepository.update(session.id, { sas, srs });
 
@@ -170,5 +172,9 @@ export class AuthService {
       await this.personnelService.remove(user.id);
       throw new InternalServerErrorException();
     }
+  }
+
+  removeUserSessions(id: number) {
+    return this.sessionRepository.delete({ personnel_id: id });
   }
 }

@@ -9,7 +9,7 @@ import { PERMISSION_KEY } from '../decorators/requiredPermission.decorator';
 import { PermissionsEnum } from '../enum/permissions.enum';
 import Express from 'express';
 import { BaseTokenPayload } from '../interface/base-token-payload.interface';
-import { RolesService } from '../modules/roles/roles.service';
+import { RolesService } from '../admin/roles/roles.service';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
