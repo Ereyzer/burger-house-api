@@ -7,6 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/signIn-auth.dto';
@@ -16,6 +17,8 @@ import { defaultConstants } from '../../config/constants/default-constants';
 import { envVars, envVarValue } from '../../config/constants/env-constants';
 import { Bearer } from '../../decorators/bearer.decorator';
 import { ApiCookieAuth } from '@nestjs/swagger';
+import { AuthWithBearerToken } from '../../decorators/authWithBearerToken.decorator';
+import { BaseTokenPayload } from '../../interface/base-token-payload.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +37,12 @@ export class AuthController {
       sameSite: envVarValue[envVars.NODE_ENV] ? 'none' : 'lax',
     });
     return { at, user };
+  }
+
+  @Get('login')
+  @AuthWithBearerToken()
+  getLoggetUser(@Req() req: { user: BaseTokenPayload } & Express.Request) {
+    return this.authService.getLoggetUser(+req.user.sub);
   }
 
   @ApiCookieAuth()

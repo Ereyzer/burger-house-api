@@ -74,6 +74,10 @@ export class MenuService {
         onboard: true,
         price: true,
       },
+      order: {
+        title: 'ASC',
+        subtitle: 'ASC',
+      },
     });
   }
 

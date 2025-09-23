@@ -25,7 +25,9 @@ export class DrinkService {
   }
 
   findAll() {
-    return this.drinkRepository.find();
+    return this.drinkRepository.find({
+      select: { id: true, name: true, price: true },
+    });
   }
 
   findOne(id: number, options: FindOneOptions<Drink> = {}) {

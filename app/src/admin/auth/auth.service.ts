@@ -82,6 +82,16 @@ export class AuthService {
     }
   }
 
+  async getLoggetUser(id: number) {
+    const user = await this.personnelService.findOne(id);
+    if (!user) throw new UnauthorizedException();
+    return {
+      firstName: user.name,
+      fatherName: user.father_name,
+      LastName: user.surname,
+      picture: user.picture,
+    };
+  }
   async refresh(at: string, rt: string) {
     const refresh = this.tokenJob.check(rt);
 

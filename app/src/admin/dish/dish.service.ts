@@ -26,7 +26,9 @@ export class DishService {
   }
 
   findAll() {
-    return this.dishRepository.find();
+    return this.dishRepository.find({
+      select: { id: true, name: true, price: true },
+    });
   }
 
   // TODO: with relations

@@ -23,6 +23,6 @@ export class Dish {
 
   @AfterLoad()
   priceToNumber() {
-    this.price = Number(this.price);
+    this.price = Number.parseFloat(this.price as unknown as string);
   }
 }

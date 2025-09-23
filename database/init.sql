@@ -249,6 +249,24 @@ CREATE TABLE IF NOT EXISTS categories (
 COMMENT ON TABLE categories IS 'categiries for filter menu';
 COMMENT on COLUMN categories.Id IS 'id is string like "drink", "vegeterian" or "spicy"';
 
+-- TODO: add default categories
+INSERT INTO categiries(id, display_name, description)
+VALUES 
+('drink', 'Напої', ''),
+('dessert', 'Десерти', ''),
+('vegeterian', 'Для вегетеріанців', ''),
+('burger', 'Бургери', ''),
+('salat', 'Салати', ''),
+('fried', 'Смажене', ''),
+('snack', 'Снеки', ''),
+('kombomenu', 'Комбо-меню', ''),
+('souse', 'Соуси', ''),
+('special', 'Спеціальні пропозиції', ''),
+('spicy', 'Гостре', ''),
+('helthy', 'Здорова Їжа', '')
+ON CONFLICT DO NOTHING;
+
+
 CREATE TABLE IF NOT EXISTS menu_in_category (
   category_id VARCHAR(20) NOT NULL,
   menu_id INTEGER NOT NULL,
