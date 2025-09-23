@@ -18,7 +18,9 @@ export class CategoriesService {
   }
 
   findAll() {
-    return this.categiryRepository.find();
+    return this.categiryRepository.find({
+      select: { id: true, display_name: true },
+    });
   }
 
   findOne(id: string) {

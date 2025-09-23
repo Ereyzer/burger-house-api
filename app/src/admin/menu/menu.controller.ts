@@ -56,7 +56,7 @@ export class MenuController {
   }
 
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
-  @Post('category/:id')
+  @Put('category/:id')
   addCategory(@Param('id') id: number, @Body('name') name: string) {
     return this.menuService.addCategory(id, name);
   }
@@ -68,7 +68,7 @@ export class MenuController {
   }
 
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
-  @Post('drinks/:id')
+  @Put('drinks/:id')
   addDrinks(@Param('id') id: string, @Body() drink: AddDrinkInMenuDto) {
     return this.menuService.addDrink(+id, drink);
   }
@@ -81,7 +81,7 @@ export class MenuController {
     return;
   }
 
-  @Post('dishes/:id')
+  @Put('dishes/:id')
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
   addDishes(@Param('id') id: string, @Body('dish') dish: AddDishInMenuDto) {
     return this.menuService.addDish(+id, dish);
