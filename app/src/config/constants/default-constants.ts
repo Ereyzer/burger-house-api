@@ -8,8 +8,11 @@ const roles = {
   EMPLOYEE: 'employee',
 };
 
+const CLOUDINARY = 'Cloudinary';
+
 export const defaultConstants = {
   roles,
   time,
   domains: domains(),
+  CLOUDINARY,
 };

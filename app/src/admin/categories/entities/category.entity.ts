@@ -9,7 +9,7 @@ import { Menu } from '../../menu/entities/menu.entity';
 export class Category {
   @PrimaryColumn({ type: 'varchar', length: 20 })
   id: string;
-  @Column({ type: 'varchar', length: 20, nullable: false })
+  @Column({ type: 'varchar', length: 25, nullable: false })
   display_name: string;
   @Column({ type: 'text' })
   description: string;

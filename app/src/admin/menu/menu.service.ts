@@ -19,6 +19,7 @@ import { DrinkInMenu } from './entities/drink-in-menu.entity';
 import { DrinkService } from '../drink/drink.service';
 import { DishService } from '../dish/dish.service';
 import { DishInMenu } from './entities/dish-in-menu.entity';
+import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 
 @Injectable()
 export class MenuService {
@@ -34,6 +35,7 @@ export class MenuService {
     private readonly categoryService: CategoriesService,
     private readonly drinkService: DrinkService,
     private readonly dishService: DishService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async create({
@@ -126,7 +128,44 @@ export class MenuService {
     return this.dishInMenuRepository.delete({ menu_id, dish_id });
   }
 
-  updateImages() {}
+  async updateImages(file: Express.Multer.File, id: number) {
+    const menuItem = await this.findOne(id);
+    if (!menuItem) throw new BadRequestException('wrong item id');
+
+    if (!menuItem?.image_medium) {
+      try {
+        const image = await this.cloudinaryService.uploadFile(file);
+        const response = await this.menuRepository.update(id, {
+          image_medium: image.url,
+        });
+        if (response.affected) {
+          menuItem.image_medium = image.url;
+          return menuItem;
+        }
+      } catch (error) {
+        throw new InternalServerErrorException((error as Error).message);
+      }
+    } else {
+      try {
+        const arr = menuItem.image_medium.split('/');
+        const name = arr[arr.length - 1];
+
+        const image = await this.cloudinaryService.uploadFile(file, name);
+        const response = await this.menuRepository.update(id, {
+          image_medium: image.url,
+        });
+
+        if (response.affected) {
+          menuItem.image_medium = image.url;
+          return menuItem;
+        }
+      } catch (error) {
+        throw new InternalServerErrorException((error as Error).message);
+      }
+    }
+
+    return;
+  }
 
   async switchOnBoard(id: number) {
     const currentStatus = await this.menuRepository.findOne({
@@ -137,7 +176,16 @@ export class MenuService {
     return this.menuRepository.update(id, { onboard: !currentStatus.onboard });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const menuItem = await this.findOne(id);
+    if (menuItem?.image_medium) {
+      const arr = menuItem.image_medium.split('/');
+      const name = arr[arr.length - 1].split('.')[0];
+
+      this.cloudinaryService.removeFile(name).catch((err) => {
+        throw err;
+      });
+    }
     return this.menuRepository.delete(id);
   }
 }

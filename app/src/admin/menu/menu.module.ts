@@ -9,6 +9,7 @@ import { DrinkInMenu } from './entities/drink-in-menu.entity';
 import { DrinkModule } from '../drink/drink.module';
 import { DishInMenu } from './entities/dish-in-menu.entity';
 import { DishModule } from '../dish/dish.module';
+import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DishModule } from '../dish/dish.module';
     CategoriesModule,
     DrinkModule,
     DishModule,
+    CloudinaryModule,
   ],
   controllers: [MenuController],
   providers: [MenuService],

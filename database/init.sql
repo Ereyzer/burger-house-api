@@ -65,7 +65,7 @@ VALUES
 ('menu:add', 'Додати позицію', 'Можливість додати в меню'),
 ('menu:delete', 'Видалити позицію ', 'Можливість видалити з меню'),
 ('menu:update', 'Оновити позицію', 'Можливість оновити інформацію про позицію меню'),
-('menu:onboard', 'Статус позиції', 'Можливість змінити статус наявності позиції меню'),
+('menu:onboard', 'Статус позиції', 'Можливість змінити статус наявності позиції меню')
 ON CONFLICT (id) DO NOTHING; 
 
 CREATE TABLE IF NOT EXISTS permit_in_role (
@@ -242,28 +242,28 @@ COMMENT ON TABLE dishes_in_menu IS 'table for references, with dish in wich menu
 
 CREATE TABLE IF NOT EXISTS categories (
   id VARCHAR(20) PRIMARY KEY,
-  display_name VARCHAR(20) NOT NULL,
+  display_name VARCHAR(25) NOT NULL,
   description TEXT
 );
 
-COMMENT ON TABLE categories IS 'categiries for filter menu';
+COMMENT ON TABLE categories IS 'categories for filter menu';
 COMMENT on COLUMN categories.Id IS 'id is string like "drink", "vegeterian" or "spicy"';
 
 -- TODO: add default categories
-INSERT INTO categiries(id, display_name, description)
+INSERT INTO categories(id, display_name, description)
 VALUES 
 ('drink', 'Напої', ''),
 ('dessert', 'Десерти', ''),
-('vegeterian', 'Для вегетеріанців', ''),
+('vegeterian', 'Для вегетеріанців', 'Страви які підійдуть вегетеріанцям'),
 ('burger', 'Бургери', ''),
 ('salat', 'Салати', ''),
-('fried', 'Смажене', ''),
-('snack', 'Снеки', ''),
+('fried', 'Смажене', 'все що з фретюру'),
+('snack', 'Снеки', 'якісь смаколики'),
 ('kombomenu', 'Комбо-меню', ''),
 ('souse', 'Соуси', ''),
 ('special', 'Спеціальні пропозиції', ''),
-('spicy', 'Гостре', ''),
-('helthy', 'Здорова Їжа', '')
+('spicy', 'Гостре', 'для тих хто любить гостре'),
+('helthy', 'Здорова Їжа', 'те що міг би дозволити лікар')
 ON CONFLICT DO NOTHING;
 
 

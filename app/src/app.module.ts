@@ -21,6 +21,7 @@ import { Menu } from './admin/menu/entities/menu.entity';
 import { MenuInCategory } from './admin/menu/entities/menu-in-category.entity';
 import { DrinkInMenu } from './admin/menu/entities/drink-in-menu.entity';
 import { DishInMenu } from './admin/menu/entities/dish-in-menu.entity';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { DishInMenu } from './admin/menu/entities/dish-in-menu.entity';
     }),
     ModulesModule,
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
