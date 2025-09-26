@@ -121,8 +121,8 @@ export class MenuService {
   }
 
   addDish(menu_id: number, { dish: dish_id }: AddDishInMenuDto) {
-    const drink = this.dishInMenuRepository.create({ menu_id, dish_id });
-    return this.dishInMenuRepository.save(drink);
+    const dish = this.dishInMenuRepository.create({ menu_id, dish_id });
+    return this.dishInMenuRepository.save(dish);
   }
   rmDish(menu_id: number, dish_id: number) {
     return this.dishInMenuRepository.delete({ menu_id, dish_id });

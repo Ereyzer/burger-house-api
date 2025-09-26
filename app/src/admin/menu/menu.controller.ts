@@ -86,7 +86,7 @@ export class MenuController {
 
   @Put('dishes/:id')
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
-  addDishes(@Param('id') id: string, @Body('dish') dish: AddDishInMenuDto) {
+  addDishes(@Param('id') id: string, @Body() dish: AddDishInMenuDto) {
     return this.menuService.addDish(+id, dish);
   }
 
