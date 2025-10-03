@@ -10,6 +10,8 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
@@ -21,6 +23,7 @@ import {
 import { AuthWithBearerToken } from '../../decorators/authWithBearerToken.decorator';
 import { RequirePermission } from '../../decorators/requiredPermission.decorator';
 import { PermissionsEnum } from '../../enum/permissions.enum';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @AuthWithBearerToken()
 @Controller('menu')
@@ -83,7 +86,7 @@ export class MenuController {
 
   @Put('dishes/:id')
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
-  addDishes(@Param('id') id: string, @Body('dish') dish: AddDishInMenuDto) {
+  addDishes(@Param('id') id: string, @Body() dish: AddDishInMenuDto) {
     return this.menuService.addDish(+id, dish);
   }
 
@@ -94,9 +97,15 @@ export class MenuController {
     return;
   }
 
-  @Post('images/:id')
+  @Patch('images/:id')
   @RequirePermission(PermissionsEnum.MENU_UPDATE)
-  updateImages() {}
+  @UseInterceptors(FileInterceptor('file'))
+  updateImages(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.menuService.updateImages(file, +id);
+  }
 
   @RequirePermission(PermissionsEnum.MENU_DELETE)
   @Delete(':id')
