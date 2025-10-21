@@ -22,6 +22,9 @@ import { MenuInCategory } from './admin/menu/entities/menu-in-category.entity';
 import { DrinkInMenu } from './admin/menu/entities/drink-in-menu.entity';
 import { DishInMenu } from './admin/menu/entities/dish-in-menu.entity';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ClientModule } from './client/client.module';
+import { ClientMenu } from './client/entities/clientMenu.entity';
+import { ClientAboutPlace } from './client/entities/clientAboutPlace.entity';
 
 @Module({
   imports: [
@@ -62,12 +65,15 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
         MenuInCategory,
         DrinkInMenu,
         DishInMenu,
+        ClientMenu,
+        ClientAboutPlace,
       ],
       synchronize: false,
     }),
     ModulesModule,
     AuthModule,
     CloudinaryModule,
+    ClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],

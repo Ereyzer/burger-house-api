@@ -13,7 +13,10 @@ async function bootstrap(): Promise<void> {
   try {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
     app.enableCors({
-      origin: [defaultConstants.domains.ADMIN, defaultConstants.domains.CLIENT],
+      origin: [
+        defaultConstants.domains.ADMIN,
+        ...defaultConstants.domains.CLIENT,
+      ],
       credentials: true,
     });
     app.use(helmet());

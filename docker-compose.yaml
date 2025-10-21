@@ -12,6 +12,8 @@ services:
       # - /usr/src/app/node_modules
     ports:
       - ${APP_PORT}:${APP_PORT}
+    environment:
+      - HOST=0.0.0.0
     env_file:
       - ./.env
     depends_on:
@@ -26,7 +28,7 @@ services:
       - ./.env
     volumes:
       # do not need now
-      # - postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - ${DB_PORT}:${DB_PORT}
@@ -49,6 +51,6 @@ services:
 #   ports:
 #     - 6379:6379
 
-# volumes:
-# postgres-data:
+volumes:
+  postgres-data:
 # redis-data:
