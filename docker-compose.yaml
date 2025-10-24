@@ -18,7 +18,8 @@ services:
       - ./.env
     depends_on:
       - db
-      # - redis
+      - migrator
+
   db:
     image: postgres:latest
     container_name: postgres-db
@@ -33,6 +34,22 @@ services:
     ports:
       - ${DB_PORT}:${DB_PORT}
 
+  migrator:
+    image: flyway/flyway:latest
+    container_name: flyway-migrator
+    env_file:
+      - ./.env
+    command: >
+      -url=jdbc:postgresql://db:${DB_PORT}/${POSTGRES_DB}
+      -user=${POSTGRES_USER}
+      -password=${POSTGRES_PASSWORD}
+      -baselineOnMigrate=true
+      migrate
+    volumes:
+      - ./database/migrations:/flyway/sql
+    depends_on:
+      - db
+
   adminer:
     image: adminer:latest
     container_name: db-adminer
@@ -41,7 +58,9 @@ services:
       - 8080:8080
     depends_on:
       - db
-# TODO: when it is start be important
+
+      # - redis
+      # TODO: when it is start be important
 # redis:
 #   image: redis:8.2.1-alpine
 #   container_name: redis-cache
