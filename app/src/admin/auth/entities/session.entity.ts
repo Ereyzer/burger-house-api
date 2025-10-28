@@ -19,8 +19,8 @@ export class Session {
   //   personnel_id SMALLINT NOT NULL REFERENCES personnel (id) ON DELETE CASCADE ON UPDATE CASCADE,
   //   sas CHAR(32) NOT NULL,
   //   srs CHAR(32) NOT NULL,
-  //   create_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  //   update_at TIMESTAMP NOT NULL DEFAULT NOW()
+  //   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  //   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
   // );
   // CREATE INDEX idx_sessions_sas_srs ON sessions (sas, srs);
   @PrimaryGeneratedColumn('uuid')
@@ -43,8 +43,8 @@ export class Session {
   srs: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  create_at: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  update_at: Date;
+  updated_at: Date;
 }

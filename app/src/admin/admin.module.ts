@@ -39,4 +39,4 @@ import { MenuModule } from './menu/menu.module';
     MenuModule,
   ],
 })
-export class ModulesModule {}
+export class AdminModule {}

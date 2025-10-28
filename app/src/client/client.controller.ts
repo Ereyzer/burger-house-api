@@ -2,6 +2,9 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { GetAllQueryDto } from './dto/getAllQuery.dto';
 import { ApiOkResponse } from '@nestjs/swagger';
+import * as common from '@nestjs/common';
+import { CreateOrderDto } from '../modules/orders/dto/create-order.dto';
+import { Post } from '@nestjs/common';
 
 @Controller('client')
 export class ClientController {
@@ -52,5 +55,10 @@ export class ClientController {
   })
   getAbout() {
     return this.clientService.getAbout();
+  }
+
+  @Post('neworder')
+  newOrder(@common.Body() order: CreateOrderDto) {
+    return this.clientService.newOrder(order);
   }
 }

@@ -1,20 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { PaginationDto } from '../../dto/pagination.dto';
 
-export class GetAllQueryDto {
-  @ApiProperty({ required: false, default: 1 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  page: number = 1;
-  @ApiProperty({ required: false, default: 10 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  perPage: number = 10;
+export class GetAllQueryDto extends PaginationDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()

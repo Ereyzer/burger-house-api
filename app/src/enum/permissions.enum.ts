@@ -26,6 +26,8 @@ export enum PermissionsEnum {
   EMPLOYEE_ADD = 'employee:add',
   EMPLOYEE_INFO = 'employee:info',
   EMPLOYEE_DELETE = 'employee:delete',
+  ORDER_READ = 'order:read',
+  ORDER_UPDATE = 'order:update',
   // TODO:  next permits need to add to DB
   // ROLE_ADD = 'role:add',
   // ROLE_UPDATE = 'role:update',

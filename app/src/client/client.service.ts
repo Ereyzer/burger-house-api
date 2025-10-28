@@ -4,6 +4,9 @@ import { ClientMenu } from './entities/clientMenu.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { calculatePaginationData } from '../utils/calculatePaginationParams.utils';
 import { ClientAboutPlace } from './entities/clientAboutPlace.entity';
+import { OrdersService } from '../modules/orders/orders.service';
+import { CreateOrderDto } from '../modules/orders/dto/create-order.dto';
+import { OrdersGateway } from '../modules/orders/orders.gateway';
 
 @Injectable()
 export class ClientService {
@@ -12,6 +15,8 @@ export class ClientService {
     private readonly clientMenu: Repository<ClientMenu>,
     @InjectRepository(ClientAboutPlace)
     private readonly clientAboutPace: Repository<ClientAboutPlace>,
+    private readonly orderService: OrdersService,
+    private readonly ordersGateway: OrdersGateway,
   ) {}
 
   async findAll(page: number, take: number, category?: string) {
@@ -67,5 +72,16 @@ export class ClientService {
 
   getAbout() {
     return this.clientAboutPace.findOneBy({ id: 1 });
+  }
+
+  async newOrder(createOrderDto: CreateOrderDto) {
+    const order = await this.orderService.create(createOrderDto);
+    this.ordersGateway.pushNewOrder(order).catch(() => {});
+    return {
+      status: order.status,
+      id: order.id,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    };
   }
 }

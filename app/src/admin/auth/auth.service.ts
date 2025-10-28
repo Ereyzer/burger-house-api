@@ -143,7 +143,9 @@ export class AuthService {
 
   async clearExpired(): Promise<void> {
     await this.sessionRepository.delete({
-      update_at: LessThan(new Date(Date.now() - defaultConstants.time.ONE_DAY)),
+      updated_at: LessThan(
+        new Date(Date.now() - defaultConstants.time.ONE_DAY),
+      ),
     });
   }
 
