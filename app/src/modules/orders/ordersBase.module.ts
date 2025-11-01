@@ -6,7 +6,6 @@ import { Order } from './entities/order.entity';
 import { MenuItemInOrder } from './entities/menuItemInOrder.entity';
 import { CustomerOrderPhoneEntity } from './entities/customerOrderPhone.entity';
 import { CipherAndHashService } from '../../services/CipherAndHash.service';
-import { OrdersController } from './orders.controller';
 import { RolesModule } from '../../admin/roles/roles.module';
 
 @Module({
@@ -18,8 +17,8 @@ import { RolesModule } from '../../admin/roles/roles.module';
       RolesModule,
     ]),
   ],
-  controllers: [OrdersController],
+  controllers: [],
   providers: [OrdersGateway, OrdersService, CipherAndHashService],
   exports: [OrdersService, OrdersGateway],
 })
-export class OrdersModule {}
+export class OrdersBaseModule {}

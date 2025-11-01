@@ -28,8 +28,13 @@ export class WsJwtGuard implements CanActivate {
   }
 
   private extractTikenFromHeader(client: Socket): string | undefined {
+    // const [type, token] =
+    //   client.handshake.headers.authorization?.split(' ') ?? [];
     const [type, token] =
-      client.handshake.headers.authorization?.split(' ') ?? [];
+      (client.handshake.auth.token as string | undefined)?.split(' ') ||
+      (client.handshake.query.token as string | undefined)?.split(' ') ||
+      client.handshake.headers.authorization?.split(' ') ||
+      [];
 
     return type === 'Bearer' ? token : undefined;
   }

@@ -5,6 +5,8 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketServer,
+  MessageBody,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { OrdersService } from './orders.service';
 // import { CreateOrderDto } from './dto/create-order.dto';
@@ -20,7 +22,7 @@ import {
 import { defaultConstants } from '../../config/constants/default-constants';
 import { WsJwtGuard } from '../../helpers/websoket.token.guard';
 import { TokenJob } from '../../helpers/tokenJob';
-import { AuthenticatedSocket } from './interfaces/authSocket.interface';
+import type { AuthenticatedSocket } from './interfaces/authSocket.interface';
 import { RolesService } from '../../admin/roles/roles.service';
 import { PermissionsEnum } from '../../enum/permissions.enum';
 
@@ -43,7 +45,10 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: AuthenticatedSocket) {
     const [type, token] =
-      client.handshake.headers.authorization?.split(' ') ?? [];
+      (client.handshake.auth.token as string | undefined)?.split(' ') ||
+      (client.handshake.query.token as string | undefined)?.split(' ') ||
+      client.handshake.headers.authorization?.split(' ') ||
+      [];
     if (type !== 'Bearer' || !token) {
       client.emit('error', new UnauthorizedException('Invalid token format'));
       return client.disconnect(true);
@@ -64,10 +69,10 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       setTimeout(() => {
         client.emit(
-          'error',
+          'tokenExpired',
           new UnauthorizedException('Session expired, please refresh token.'),
         );
-        client.disconnect(true);
+        // client.disconnect(true);
       }, expiresInMs);
     } catch (error) {
       const er = error as Error;
@@ -93,6 +98,44 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
+  @SubscribeMessage('checkFreshToken')
+  checkFreshToken(
+    @MessageBody() data: { token: string },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const [type, token] = data.token.split(' ');
+    if (type !== 'Bearer' || !token) {
+      client.emit('error', new UnauthorizedException('Invalid token format'));
+      return client.disconnect(true);
+    }
+    try {
+      const payload = this.tokenJob.check(token);
+
+      client['user'] = {
+        ...client.user,
+        exp: (payload as { exp: string } & typeof payload).exp,
+      };
+      console.log('token approve');
+
+      // TODO: expired token
+      const expiresInMs = Number(client.user.exp) * 1000 - Date.now();
+
+      setTimeout(() => {
+        console.log('tokenExpired');
+
+        client.emit(
+          'tokenExpired',
+          new UnauthorizedException('Session expired, please refresh token.'),
+        );
+        // client.disconnect(true);
+      }, expiresInMs);
+    } catch (error) {
+      const er = error as Error;
+      client.emit('error', new UnauthorizedException(er.message));
+
+      return client.disconnect(true);
+    }
+  }
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('newOrderCreated')
   newUserMesage() {

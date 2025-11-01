@@ -140,7 +140,7 @@ COMMENT on COLUMN personnel.role_id IS 'role off user for permits';
 -- TODO: table for restorant
 -- create table about
 CREATE TABLE IF NOT EXISTS about (
- id SMALLSERIAL PRIMARY KEY,
+ id SMALLINT PRIMARY KEY DEFAULT 1,
   facebook VARCHAR(255),
   instagram VARCHAR(255),
   email VARCHAR(255),

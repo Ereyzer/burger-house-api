@@ -1,10 +1,10 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Query } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { GetAllQueryDto } from './dto/getAllQuery.dto';
 import { ApiOkResponse } from '@nestjs/swagger';
-import * as common from '@nestjs/common';
 import { CreateOrderDto } from '../modules/orders/dto/create-order.dto';
 import { Post } from '@nestjs/common';
+import { CountPriceDto } from './dto/countPrice.dt';
 
 @Controller('client')
 export class ClientController {
@@ -58,7 +58,12 @@ export class ClientController {
   }
 
   @Post('neworder')
-  newOrder(@common.Body() order: CreateOrderDto) {
+  newOrder(@Body() order: CreateOrderDto) {
     return this.clientService.newOrder(order);
+  }
+
+  @Post('newOrder/totalPrice')
+  totalPrice(@Body() { items }: CountPriceDto) {
+    return this.clientService.totalPrice(items);
   }
 }

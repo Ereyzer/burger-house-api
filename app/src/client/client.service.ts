@@ -3,20 +3,23 @@ import { Repository } from 'typeorm';
 import { ClientMenu } from './entities/clientMenu.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { calculatePaginationData } from '../utils/calculatePaginationParams.utils';
-import { ClientAboutPlace } from './entities/clientAboutPlace.entity';
 import { OrdersService } from '../modules/orders/orders.service';
 import { CreateOrderDto } from '../modules/orders/dto/create-order.dto';
 import { OrdersGateway } from '../modules/orders/orders.gateway';
+import { CountPriceDto } from './dto/countPrice.dt';
+import { MenuService } from '../admin/menu/menu.service';
+import { totalPriceCalculator } from '../utils/totalPriceCalculator';
+import { AboutService } from '../admin/about/about.service';
 
 @Injectable()
 export class ClientService {
   constructor(
     @InjectRepository(ClientMenu)
     private readonly clientMenu: Repository<ClientMenu>,
-    @InjectRepository(ClientAboutPlace)
-    private readonly clientAboutPace: Repository<ClientAboutPlace>,
+    private readonly menuService: MenuService,
     private readonly orderService: OrdersService,
     private readonly ordersGateway: OrdersGateway,
+    private readonly aboutService: AboutService,
   ) {}
 
   async findAll(page: number, take: number, category?: string) {
@@ -70,12 +73,18 @@ export class ClientService {
     return item;
   }
 
-  getAbout() {
-    return this.clientAboutPace.findOneBy({ id: 1 });
+  async getAbout() {
+    return {
+      ...(await this.aboutService.findOne()),
+      openingHours: await this.aboutService.getOpeningHours(),
+    };
   }
 
   async newOrder(createOrderDto: CreateOrderDto) {
     const order = await this.orderService.create(createOrderDto);
+    order.amount = (
+      await this.totalPrice([...createOrderDto.selections])
+    ).total;
     this.ordersGateway.pushNewOrder(order).catch(() => {});
     return {
       status: order.status,
@@ -83,5 +92,22 @@ export class ClientService {
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
     };
+  }
+
+  async totalPrice(items: CountPriceDto['items']) {
+    const ids: number[] = [];
+    const quantityObj = items.reduce(
+      (acc, item) => {
+        acc[item.id] = item.quantity;
+        ids.push(item.id);
+        return acc;
+      },
+      {} as { [key: number]: number },
+    );
+    const menuItems = await this.menuService.findByIds(ids, ['price']);
+
+    const total = totalPriceCalculator(menuItems, quantityObj);
+
+    return { total };
   }
 }

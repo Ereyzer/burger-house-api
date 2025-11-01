@@ -8,16 +8,18 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 //         about_description TEXT
 @Entity('about')
 export class About {
-  @PrimaryColumn({ type: 'smallint' })
-  id: number;
-  @Column({ type: 'varchar', length: 255 })
-  facebook: string;
-  @Column({ type: 'varchar', length: 255 })
-  instagram: string;
-  @Column({ type: 'varchar', length: 255 })
-  email: string;
-  @Column({ type: 'char', length: 9 })
-  phone: string;
-  @Column({ type: 'text' })
-  about_description: string;
+  @PrimaryColumn({ type: 'smallint', default: 1 })
+  id: number = 1;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  facebook: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  instagram: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  email: string | null;
+  @Column({ type: 'char', length: 9, nullable: true })
+  phone: string | null;
+  @Column({ type: 'text', nullable: true })
+  about_description: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  address: string | null;
 }

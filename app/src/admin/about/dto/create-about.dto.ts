@@ -11,16 +11,18 @@ const GeneralStringDecorator = GeneralPropertyDecoratorMaker(
 export class CreateAboutDto {
   @GeneralStringDecorator()
   @IsUrl()
-  facebook: string;
+  facebook?: string;
   @GeneralStringDecorator()
   @IsUrl()
-  instagram: string;
+  instagram?: string;
   @GeneralStringDecorator()
   @IsEmail()
-  email: string;
+  email?: string;
   @GeneralStringDecorator()
   @Length(9, 9)
-  phone: string;
+  phone?: string;
   @GeneralStringDecorator()
-  about_description: string;
+  about_description?: string;
+  @GeneralStringDecorator()
+  address?: string;
 }
