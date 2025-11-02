@@ -9,6 +9,7 @@ import { DrinkModule } from './drink/drink.module';
 import { DishModule } from './dish/dish.module';
 import { CategoriesModule } from './categories/categories.module';
 import { MenuModule } from './menu/menu.module';
+import { OrdersModule } from './orderes/orders.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { MenuModule } from './menu/menu.module';
           DishModule,
           CategoriesModule,
           MenuModule,
+          OrdersModule,
         ],
       },
     ]),
@@ -37,6 +39,7 @@ import { MenuModule } from './menu/menu.module';
     DishModule,
     CategoriesModule,
     MenuModule,
+    OrdersModule,
   ],
 })
-export class ModulesModule {}
+export class AdminModule {}

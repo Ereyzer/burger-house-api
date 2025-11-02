@@ -140,7 +140,7 @@ COMMENT on COLUMN personnel.role_id IS 'role off user for permits';
 -- TODO: table for restorant
 -- create table about
 CREATE TABLE IF NOT EXISTS about (
- id SMALLSERIAL PRIMARY KEY,
+ id SMALLINT PRIMARY KEY DEFAULT 1,
   facebook VARCHAR(255),
   instagram VARCHAR(255),
   email VARCHAR(255),
@@ -293,8 +293,8 @@ CREATE TABLE IF NOT EXISTS sessions (
   personnel_id SMALLINT NOT NULL REFERENCES personnel (id) ON DELETE CASCADE ON UPDATE CASCADE,
   sas CHAR(32) NOT NULL,
   srs CHAR(32) NOT NULL,
-  create_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  update_at TIMESTAMP NOT NULL DEFAULT NOW()
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
  
 );
 CREATE INDEX idx_sessions_sas_srs ON sessions (sas, srs);

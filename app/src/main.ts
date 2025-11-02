@@ -44,9 +44,9 @@ async function bootstrap(): Promise<void> {
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, documentFactory);
 
-    await app.listen(envVarValue[envVars.APP_PORT], () =>
-      console.log(`server run on port: ${envVarValue[envVars.APP_PORT]}`),
-    );
+    await app.listen(envVarValue[envVars.APP_PORT], () => {
+      console.log(`server run on port: ${envVarValue[envVars.APP_PORT]}`);
+    });
     return;
   } catch (error) {
     console.log(error);

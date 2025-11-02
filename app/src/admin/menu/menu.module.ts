@@ -21,5 +21,6 @@ import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
   ],
   controllers: [MenuController],
   providers: [MenuService],
+  exports: [MenuService],
 })
 export class MenuModule {}

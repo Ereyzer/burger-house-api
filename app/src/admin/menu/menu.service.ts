@@ -12,7 +12,7 @@ import {
 } from './dto/update-menu.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from './entities/menu.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsSelect, In, Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { MenuInCategory } from './entities/menu-in-category.entity';
 import { DrinkInMenu } from './entities/drink-in-menu.entity';
@@ -187,5 +187,19 @@ export class MenuService {
       });
     }
     return this.menuRepository.delete(id);
+  }
+
+  async findByIds<K extends keyof Menu>(
+    ids: number[],
+    selectList: K[] = [] as K[],
+  ): Promise<(Pick<Menu, K> & { id: number })[]> {
+    const select = ['id', ...selectList].reduce((acc, key) => {
+      (acc as { [key]: boolean })[key] = true;
+      return acc;
+    }, {} as FindOptionsSelect<Menu>);
+    return this.menuRepository.find({
+      where: { id: In(ids) },
+      select,
+    });
   }
 }

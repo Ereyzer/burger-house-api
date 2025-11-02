@@ -50,7 +50,7 @@ export class Menu {
     inverseJoinColumns: [{ name: 'category_id', referencedColumnName: 'id' }],
   })
   categories: Category[];
-
+  // TODO: add quantity
   @ManyToMany(() => Drink, (drink) => drink.menu_items)
   @JoinTable({
     name: 'drinks_in_menu',
@@ -58,6 +58,7 @@ export class Menu {
     inverseJoinColumns: [{ name: 'drink_id', referencedColumnName: 'id' }],
   })
   drinks: Drink[];
+  // TODO: add quantity
 
   @ManyToMany(() => Dish, (dish) => dish.menu_items)
   @JoinTable({

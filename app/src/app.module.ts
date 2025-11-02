@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ModulesModule } from './admin/modules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envVars, envVarValue } from './config/constants/env-constants';
 import { Permit } from './admin/permits/entities/permit.entity';
@@ -11,7 +10,6 @@ import { Personnel } from './admin/personnel/entities/personnel.entity';
 import Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
 import { Password } from './admin/personnel/entities/password.entity';
-import { AuthModule } from './admin/auth/auth.module';
 import { Session } from './admin/auth/entities/session.entity';
 import { About } from './admin/about/entities/about.entity';
 import { Drink } from './admin/drink/entities/drink.entity';
@@ -24,7 +22,12 @@ import { DishInMenu } from './admin/menu/entities/dish-in-menu.entity';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ClientModule } from './client/client.module';
 import { ClientMenu } from './client/entities/clientMenu.entity';
-import { ClientAboutPlace } from './client/entities/clientAboutPlace.entity';
+import { AdminModule } from './admin/admin.module';
+import { Order } from './modules/orders/entities/order.entity';
+import { MenuItemInOrder } from './modules/orders/entities/menuItemInOrder.entity';
+import { CustomerOrderPhoneEntity } from './modules/orders/entities/customerOrderPhone.entity';
+import { ModulesModule } from './modules/modules.module';
+import { OpeningHour } from './admin/about/entities/openingTime.entity';
 
 @Module({
   imports: [
@@ -66,14 +69,17 @@ import { ClientAboutPlace } from './client/entities/clientAboutPlace.entity';
         DrinkInMenu,
         DishInMenu,
         ClientMenu,
-        ClientAboutPlace,
+        Order,
+        MenuItemInOrder,
+        CustomerOrderPhoneEntity,
+        OpeningHour,
       ],
       synchronize: false,
     }),
-    ModulesModule,
-    AuthModule,
+    AdminModule,
     CloudinaryModule,
     ClientModule,
+    ModulesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
