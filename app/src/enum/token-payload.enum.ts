@@ -1,5 +1,6 @@
 export enum TokenPayloadEnum {
   ACCESS = 'at',
-  REFRESH = 'rf',
+  REFRESH = 'rt',
   TEST = 'tt',
+  VERIFY = 'vt',
 }

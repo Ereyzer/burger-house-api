@@ -41,7 +41,7 @@ export class CipherAndHashService {
 
   public async createHash(
     text: string,
-    workFactor: number | string,
+    workFactor: number | string, // SALT CHAR(31)
   ): Promise<string> {
     return await bcrypt.hash(text, workFactor);
   }
@@ -61,8 +61,8 @@ export class CipherAndHashService {
 
     const cipher = crypto.createCipheriv('aes-256-ctr', key, iv);
     const encriypted = Buffer.concat([
-      cipher.update(text, 'utf8'),
-      cipher.final(),
+      cipher.update(text, 'utf8') as unknown as Uint8Array,
+      cipher.final() as unknown as Uint8Array,
     ]);
     return [iv.toString('base64'), encriypted.toString('base64')].join(':');
   }
@@ -73,7 +73,10 @@ export class CipherAndHashService {
     const key = Buffer.from(envVarValue[envVars.CIPER_SALT], 'hex');
     const encriypt = Buffer.from(encryptText, 'base64');
     const cipher = crypto.createDecipheriv('aes-256-ctr', key, iv);
-    const text = Buffer.concat([cipher.update(encriypt), cipher.final()]);
+    const text = Buffer.concat([
+      cipher.update(encriypt) as unknown as Uint8Array,
+      cipher.final() as unknown as Uint8Array,
+    ]);
 
     return text.toString('utf8');
   }

@@ -13,16 +13,6 @@ import { Personnel } from '../../personnel/entities/personnel.entity';
 @Entity({ name: 'sessions' })
 @Index('idx_sessions_sas_srs', ['sas', 'srs'])
 export class Session {
-  // CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-  // CREATE TABLE IF NOT EXISTS sessions (
-  //   id UUID PRIMARY KEY DEFAULT uuid_generated_v4(),
-  //   personnel_id SMALLINT NOT NULL REFERENCES personnel (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  //   sas CHAR(32) NOT NULL,
-  //   srs CHAR(32) NOT NULL,
-  //   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  //   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-  // );
-  // CREATE INDEX idx_sessions_sas_srs ON sessions (sas, srs);
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

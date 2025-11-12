@@ -28,6 +28,7 @@ import { MenuItemInOrder } from './modules/orders/entities/menuItemInOrder.entit
 import { CustomerOrderPhoneEntity } from './modules/orders/entities/customerOrderPhone.entity';
 import { ModulesModule } from './modules/modules.module';
 import { OpeningHour } from './admin/about/entities/openingTime.entity';
+import { DeliveryPrices } from './admin/about/entities/deliveryPrices.entity';
 
 @Module({
   imports: [
@@ -38,21 +39,32 @@ import { OpeningHour } from './admin/about/entities/openingTime.entity';
           .required(),
         [envVars.DB_DATABASE]: Joi.string().required(),
         [envVars.DB_USERNAME]: Joi.string().required(),
-        [envVars.DB_PASSWORD]: Joi.string().required(),
+        ...(envVarValue.NODE_ENV !== 'development'
+          ? {
+              [envVars.DB_PASSWORD]: Joi.string().required(),
+            }
+          : {}),
         [envVars.DB_HOST]: Joi.string().required(),
         [envVars.DB_PORT]: Joi.string().required(),
         [envVars.CIPER_SALT]: Joi.string().required(),
         [envVars.PASSWORD_PEPPER]: Joi.string().required(),
         [envVars.JWT_SECRET_KEY]: Joi.string().required(),
+        [envVars.MAILER_SEND_TOKEN]: Joi.string().required(),
+        [envVars.GOOGLE_MAPS_KEY]: Joi.string().required(),
+        [envVars.PHONE_SALT]: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: 'cockroachdb',
       host: envVarValue[envVars.DB_HOST],
       port: envVarValue[envVars.DB_PORT],
       username: envVarValue[envVars.DB_USERNAME],
       password: envVarValue[envVars.DB_PASSWORD],
       database: envVarValue[envVars.DB_DATABASE],
+      ssl:
+        envVarValue[envVars.NODE_ENV] !== 'development'
+          ? { rejectUnauthorized: true }
+          : false,
       entities: [
         Permit,
         Role,
@@ -73,8 +85,11 @@ import { OpeningHour } from './admin/about/entities/openingTime.entity';
         MenuItemInOrder,
         CustomerOrderPhoneEntity,
         OpeningHour,
+        DeliveryPrices,
       ],
       synchronize: false,
+      retryAttempts: 10,
+      retryDelay: 5000,
     }),
     AdminModule,
     CloudinaryModule,

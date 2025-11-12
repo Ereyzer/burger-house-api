@@ -29,7 +29,7 @@ import { PermissionsEnum } from '../../enum/permissions.enum';
 @WebSocketGateway({
   namespace: 'orders',
   cors: {
-    origin: [defaultConstants.domains.ADMIN],
+    origin: [...defaultConstants.domains.ADMIN],
     credentials: true,
   },
 })
@@ -115,7 +115,6 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
         ...client.user,
         exp: (payload as { exp: string } & typeof payload).exp,
       };
-      console.log('token approve');
 
       // TODO: expired token
       const expiresInMs = Number(client.user.exp) * 1000 - Date.now();
@@ -131,6 +130,13 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }, expiresInMs);
     } catch (error) {
       const er = error as Error;
+      if (er.message === 'TokenExpiredError') {
+        client.emit(
+          'tokenExpired',
+          new UnauthorizedException('Session expired, please refresh token.'),
+        );
+        return;
+      }
       client.emit('error', new UnauthorizedException(er.message));
 
       return client.disconnect(true);

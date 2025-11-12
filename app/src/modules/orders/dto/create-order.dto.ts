@@ -38,6 +38,12 @@ export class CreateOrderDto {
   @Min(0.0)
   @Max(99999.99)
   amount: number;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0.0)
+  @Max(99.99)
+  deliveryPrice?: number;
   @ApiProperty()
   @IsString()
   @Length(9)
@@ -50,15 +56,18 @@ export class CreateOrderDto {
   @ApiProperty()
   @IsBoolean()
   delivery: boolean;
-  @ApiProperty()
+  @ApiProperty({ required: false, nullable: true, type: String })
+  @IsOptional()
   @IsString()
-  street: string;
-  @ApiProperty()
+  street?: string;
+  @ApiProperty({ required: false, nullable: true, type: String })
+  @IsOptional()
   @IsString()
-  address: string;
-  @ApiProperty()
+  address?: string | null;
+  @ApiProperty({ required: false, nullable: true, type: String })
+  @IsOptional()
   @IsString()
-  addressClarification: string;
+  addressClarification?: string | null;
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
@@ -72,4 +81,8 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => Selection)
   selections: Selection[];
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  distance?: number;
 }

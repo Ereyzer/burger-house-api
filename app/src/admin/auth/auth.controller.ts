@@ -8,6 +8,7 @@ import {
   HttpStatus,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/signIn-auth.dto';
@@ -19,6 +20,7 @@ import { Bearer } from '../../decorators/bearer.decorator';
 import { ApiCookieAuth } from '@nestjs/swagger';
 import { AuthWithBearerToken } from '../../decorators/authWithBearerToken.decorator';
 import { BaseTokenPayload } from '../../interface/base-token-payload.interface';
+import { VerifyTokenGuard } from '../../helpers/verifyToken.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -36,6 +38,7 @@ export class AuthController {
       maxAge: defaultConstants.time.ONE_DAY,
       sameSite: envVarValue[envVars.NODE_ENV] ? 'none' : 'lax',
     });
+    this.authService.clearExpired();
     return { at, user };
   }
 
@@ -69,9 +72,9 @@ export class AuthController {
   async logout(
     @Bearer('at') at: string,
     @Cookie('rt') rt: string,
-    @Res({ passthrough: true }) req: Express.Response,
+    @Res({ passthrough: true }) res: Express.Response,
   ) {
-    req.clearCookie('rt');
+    res.clearCookie('rt');
     await this.authService.logout(at, rt);
 
     return;
@@ -88,5 +91,15 @@ export class AuthController {
   @Get('register/create/owner')
   createOwner(@Query() query: LoginAuthDto) {
     return this.authService.createOwner(query);
+  }
+
+  @UseGuards(VerifyTokenGuard)
+  @Get('verify/email/:token')
+  async verifyEmail(@Req() req: { user: BaseTokenPayload } & Express.Request) {
+    if (!(await this.authService.verifyEmail(req.user)))
+      return '<h1>Верефікаці пішла не за планом звернітся до власника</h1>';
+
+    return `<h1>Верефікаці Успішна</h1>
+    <a href="${defaultConstants.domains.ADMIN[0]}">Натисніть сюди!</a>`;
   }
 }

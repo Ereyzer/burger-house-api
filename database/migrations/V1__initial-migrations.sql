@@ -1,7 +1,9 @@
--- database/init.sql
--- TODO: create structure
 
 --TODO:  tables for personnel and they permissions
+CREATE DATABASE IF NOT EXISTS burger_delivery;
+
+USE burger_delivery;
+
 -- create table roles
 CREATE TABLE IF NOT EXISTS roles (
   Id VARCHAR(20) PRIMARY KEY,
@@ -15,13 +17,6 @@ COMMENT ON COLUMN roles.id IS 'Unique role id (for example, "admin", "employee",
 COMMENT ON COLUMN roles.display_name IS 'Display role name for user interface.';
 COMMENT ON COLUMN roles.description IS 'description about role.';
 
-INSERT INTO roles (id, display_name, description)
-VALUES 
-('owner', 'власник', 'Максимальний доступ до усіх налаштувань включає в себе усі дозволи.'),
-('admin', 'адміністратор', 'можливість надавати тимчасово більшу кількісь повноважень для розробників'),
-('manager', 'менеджер', NULL),
-('employee', 'працівник', NULL)
-ON CONFLICT (id) DO NOTHING; 
 
 -- create table permisions
 CREATE TABLE IF NOT EXISTS permits (
@@ -35,43 +30,6 @@ COMMENT ON TABLE permits IS 'Storage table for permits of personnel.';
 COMMENT ON COLUMN permits.id IS 'Unique name of permit (for example, "products:read").';
 COMMENT ON COLUMN permits.display_name IS 'dsplay name for user interface.';
 COMMENT ON COLUMN permits.description IS 'explain why this permit you need.';
-
--- TODO: insert some permissions
-INSERT INTO permits (id, display_name, description)
-VALUES
-('personnel:add', 'Додати користовача', 'можливість додавати нових користовачів в таблицю personnel'),
-('personnel:role', 'Оновлення ролі', 'можливість оновлювати ролі користувачів'),
-('personnel:info', 'інформація про одного працівника', NULL),
-('personnel:get-all', 'список усіх працівників', NULL),
-('personnel:delete', 'видалити працівника', NULL),
-('permits:info', 'інформація про перміт', NULL),
-('permits:get-all', 'список пермітів', NULL),
-('roles:operations', 'операції з ролями', 'поки що охоплює усі операції з ролями'),
-('about:get', 'опис закладу', NULL),
-('about:update', 'оновлення опису', NULL),
-('drink:add', 'Додати напій', NULL),
-('drink:update', 'Оновити ціну напою', NULL),
-('drink:delete', 'Видалити напій', NULL),
-('dish:add', 'Додати страву', NULL),
-('dish:update', 'Оновити страву', NULL),
-('dish:delete', 'Видалити страву', NULL),
-('category:add', 'Додати категорію', NULL),
-('category:update', 'Оновити категорію', NULL),
-('category:delete', 'Видалити категорію', NULL),
-('manager:info', 'Оновити менеджера', 'Можливість оновити персональні дані працівника з дозволом "manager"'),
-('employee:add', 'Додати працівника', 'Можливість додати працівника з дозволом "employee"'),
-('employee:info', 'Оновити працівника', 'Можливість оновити персональні дані працівника з дозволом "employee"'),
-('employee:delete', 'Видалити працівника', 'Можливість видалити працівника з дозволом "employee"'),
-('menu:add', 'Додати позицію', 'Можливість додати в меню'),
-('menu:delete', 'Видалити позицію ', 'Можливість видалити з меню'),
-('menu:update', 'Оновити позицію', 'Можливість оновити інформацію про позицію меню'),
-('menu:onboard', 'Статус позиції', 'Можливість змінити статус наявності позиції меню'),
-('order:read', 'отримувати замовлення', NULL),
-('order:update-status', 'оновлювати статус замовлення', NULL),
-('order:cancle', 'Відмінити замовлення', NULL),
-('opening:read', 'Перевірити час відкриття', NULL),
-('opening:update', 'оновлювати час відкриття', NULL)
-ON CONFLICT (id) DO NOTHING; 
 
 CREATE TABLE IF NOT EXISTS permit_in_role (
   role_id VARCHAR(20) NOT NULL,
@@ -95,24 +53,6 @@ CREATE TABLE IF NOT EXISTS permit_in_role (
 COMMENT ON TABLE permit_in_role IS 'Таблиця зв''язку, що визначає, які дозволи належать до яких ролей.';
 COMMENT ON COLUMN permit_in_role.role_id IS 'Ідентифікатор ролі, зовнішній ключ до таблиці roles.';
 COMMENT ON COLUMN permit_in_role.permit_id IS 'Ідентифікатор дозволу, зовнішній ключ до таблиці permits.';
-
--- 1. add all permits to owner
-INSERT INTO permit_in_role (role_id, permit_id)
-SELECT 'owner', id FROM permits
-ON CONFLICT (role_id, permit_id) DO NOTHING;
-
--- 2. add permits to manager
-INSERT INTO permit_in_role (role_id, permit_id)
-SELECT 'manager', id FROM permits
-WHERE id LIKE 'menu:%' OR id LIKE 'drink:%' OR id LIKE 'dish:%' OR id LIKE 'employee:%' OR id='manager:info'
-ON CONFLICT (role_id, permit_id) DO NOTHING;
-
--- 3. add permit onboard to 'employee'
-INSERT INTO permit_in_role (role_id, permit_id)
-VALUES 
-('employee', 'menu:onboard'),
-('employee', 'employee:info')
-ON CONFLICT (role_id, permit_id) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS passwords(
   id SERIAL PRIMARY KEY,
@@ -172,17 +112,6 @@ CREATE TABLE IF NOT EXISTS opening_hours (
   opens_at TIME WITHOUT TIME ZONE,
   closes_at TIME WITHOUT TIME ZONE
 );
-
-INSERT INTO opening_hours (day_of_week, opens_at, closes_at)
-VALUES
-(0,null,null),
-(1,null,null),
-(2,null,null),
-(3,null,null),
-(4,null,null),
-(5,null,null),
-(6,null,null)
-ON CONFLICT (day_of_week) DO NOTHING;
 
 --TODO:
 
@@ -275,23 +204,6 @@ CREATE TABLE IF NOT EXISTS categories (
 COMMENT ON TABLE categories IS 'categories for filter menu';
 COMMENT on COLUMN categories.Id IS 'id is string like "drink", "vegeterian" or "spicy"';
 
--- TODO: add default categories
-INSERT INTO categories(id, display_name, description)
-VALUES 
-('drink', 'Напої', ''),
-('dessert', 'Десерти', ''),
-('vegeterian', 'Для вегетеріанців', 'Страви які підійдуть вегетеріанцям'),
-('burger', 'Бургери', ''),
-('salat', 'Салати', ''),
-('fried', 'Смажене', 'все що з фретюру'),
-('snack', 'Снеки', 'якісь смаколики'),
-('kombomenu', 'Комбо-меню', ''),
-('souse', 'Соуси', ''),
-('special', 'Спеціальні пропозиції', ''),
-('spicy', 'Гостре', 'для тих хто любить гостре'),
-('helthy', 'Здорова Їжа', 'те що міг би дозволити лікар')
-ON CONFLICT DO NOTHING;
-
 
 CREATE TABLE IF NOT EXISTS menu_in_category (
   category_id VARCHAR(20) NOT NULL,
@@ -312,11 +224,9 @@ CREATE TABLE IF NOT EXISTS menu_in_category (
 COMMENT ON TABLE menu_in_category IS 'this table explain wich dish in which category';
 
 -- TODO: sessions
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "gen_random_uuid"; 
 
 CREATE TABLE IF NOT EXISTS sessions (
-  -- id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+--   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   personnel_id SMALLINT NOT NULL REFERENCES personnel (id) ON DELETE CASCADE ON UPDATE CASCADE,
   sas CHAR(32) NOT NULL,
@@ -327,55 +237,25 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 CREATE INDEX idx_sessions_sas_srs ON sessions (sas, srs);
 
-
-
-
-
 -- TODO: orders
 
+CREATE TYPE IF NOT EXISTS payment_method AS ENUM (
+    'CARD_ONLINE',       -- Оплата банківською карткою онлайн
+    'CARD_ON_DELIVERY',  -- Оплата карткою при отриманні (через POS-термінал)
+    'CASH_ON_DELIVERY',  -- Оплата готівкою при отриманні
+    'BANK_TRANSFER',     -- Банківський переказ (для корпоративних клієнтів)
+    'PAYPAL',            -- PayPal або інші сторонні платіжні системи
+    'APPLE_PAY',         -- Apple Pay / Google Pay
+    'GIFT_CARD'          -- Подарункова картка
+);
 
-CREATE OR REPLACE FUNCTION update_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-DO $$ 
-BEGIN 
-    IF not EXISTS (
-        SELECT 1 from pg_type WHERE typname = 'payment_method'
-    ) THEN
-        CREATE TYPE payment_method AS ENUM (
-            'CARD_ONLINE',       -- Оплата банківською карткою онлайн
-            'CARD_ON_DELIVERY',  -- Оплата карткою при отриманні (через POS-термінал)
-            'CASH_ON_DELIVERY',  -- Оплата готівкою при отриманні
-            'BANK_TRANSFER',     -- Банківський переказ (для корпоративних клієнтів)
-            'PAYPAL',            -- PayPal або інші сторонні платіжні системи
-            'APPLE_PAY',         -- Apple Pay / Google Pay
-            'GIFT_CARD'          -- Подарункова картка
-        );
-    END IF;
-END
-$$;
-
-DO $$ 
-BEGIN 
-    IF not EXISTS (
-        SELECT 1 from pg_type WHERE typname = 'order_status'
-    ) THEN
-
-        CREATE TYPE order_status AS ENUM (
-            'pending',
-            'processing',
-            'shipped',
-            'delivered',
-            'cancelled'
-        );
-    END IF;
-END
-$$;
+CREATE TYPE IF NOT EXISTS order_status AS ENUM (
+    'pending',
+    'processing',
+    'shipped',
+    'delivered',
+    'cancelled'
+);
 
 
 
@@ -397,24 +277,9 @@ CREATE TABLE IF NOT EXISTS orders (
     enc_email VARCHAR(255) DEFAULT NULL
 );
 
-DO $$
-BEGIN 
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger WHERE tgname = 'set_order_timestamp'
-    ) THEN 
-        CREATE TRIGGER set_order_timestamp
-        BEFORE UPDATE ON orders 
-        FOR EACH ROW
-        EXECUTE PROCEDURE update_timestamp();
-    END IF;
-END;
-$$;
-
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS customer_order_phone_hashes (
-hash_phone CHAR(60) NOT NULL,
-  -- hash_phone CHAR(64) NOT NULL,
+hash_phone CHAR(31) NOT NULL,
 order_id INTEGER NOT NULL,
 PRIMARY KEY (hash_phone, order_id),
 
@@ -456,26 +321,11 @@ CREATE TABLE IF NOT EXISTS delivery_prices (
   min_order SMALLINT NOT NULL,
   delivery_price DECIMAL(5,2) NOT NULL DEFAULT 0.00,
   onboard BOOLEAN DEFAULT true
-  );
+);
 
-INSERT INTO delivery_prices (min_order, delivery_price, distance)
-VALUES 
-(150, 50.00, 2000),
-(200, 25.00, 2000),
--- > 200 < 2000 = 0000
- (150, 75.00, 2500),
-(200, 50.00, 2500),
-(250, 25.00, 2500),
--- > 250 < 2000 = 000
-(150, 100.00, 3500),
-(200, 75.00, 3500),
-(250, 50.00, 3500),
-(350, 25.00, 3500),
--- > 250 < 2000 = 000
-(250, 100.00, 4000),
-(350, 50.00, 4000),
-(400, 25.00, 4000);
--- > 400 < 4000 = 000
+CREATE UNIQUE INDEX IF NOT EXISTS delivery_prices_unique_rate
+ON delivery_prices (distance, min_order);
+
 
 -- TODO: allergens
 
@@ -490,3 +340,113 @@ VALUES
 -- TODO: discount
 
 -- TODO: ............... NEXT WILL BE  IN SOME ANOTHER WAY
+
+-- TODO: data add with CLI
+
+INSERT INTO roles (id, display_name, description)
+VALUES 
+('owner', 'власник', 'Максимальний доступ до усіх налаштувань включає в себе усі дозволи.'),
+('admin', 'адміністратор', 'можливість надавати тимчасово більшу кількісь повноважень для розробників'),
+('manager', 'менеджер', NULL),
+('employee', 'працівник', NULL)
+ON CONFLICT (id) DO NOTHING; 
+
+-- TODO: insert some permissions
+INSERT INTO permits (id, display_name, description)
+VALUES
+('personnel:add', 'Додати користовача', 'можливість додавати нових користовачів в таблицю personnel'),
+('personnel:role', 'Оновлення ролі', 'можливість оновлювати ролі користувачів'),
+('personnel:info', 'інформація про одного працівника', NULL),
+('personnel:get-all', 'список усіх працівників', NULL),
+('personnel:delete', 'видалити працівника', NULL),
+('permits:info', 'інформація про перміт', NULL),
+('permits:get-all', 'список пермітів', NULL),
+('roles:operations', 'операції з ролями', 'поки що охоплює усі операції з ролями'),
+('about:get', 'опис закладу', NULL),
+('about:update', 'оновлення опису', NULL),
+('drink:add', 'Додати напій', NULL),
+('drink:update', 'Оновити ціну напою', NULL),
+('drink:delete', 'Видалити напій', NULL),
+('dish:add', 'Додати страву', NULL),
+('dish:update', 'Оновити страву', NULL),
+('dish:delete', 'Видалити страву', NULL),
+('category:add', 'Додати категорію', NULL),
+('category:update', 'Оновити категорію', NULL),
+('category:delete', 'Видалити категорію', NULL),
+('manager:info', 'Оновити менеджера', 'Можливість оновити персональні дані працівника з дозволом "manager"'),
+('employee:add', 'Додати працівника', 'Можливість додати працівника з дозволом "employee"'),
+('employee:info', 'Оновити працівника', 'Можливість оновити персональні дані працівника з дозволом "employee"'),
+('employee:delete', 'Видалити працівника', 'Можливість видалити працівника з дозволом "employee"'),
+('menu:add', 'Додати позицію', 'Можливість додати в меню'),
+('menu:delete', 'Видалити позицію ', 'Можливість видалити з меню'),
+('menu:update', 'Оновити позицію', 'Можливість оновити інформацію про позицію меню'),
+('menu:onboard', 'Статус позиції', 'Можливість змінити статус наявності позиції меню'),
+('order:read', 'отримувати замовлення', NULL),
+('order:update-status', 'оновлювати статус замовлення', NULL),
+('order:cancle', 'Відмінити замовлення', NULL),
+('opening:read', 'Перевірити час відкриття', NULL),
+('opening:update', 'оновлювати час відкриття', NULL)
+ON CONFLICT (id) DO NOTHING; 
+
+
+-- 1. add all permits to owner
+INSERT INTO permit_in_role (role_id, permit_id)
+SELECT 'owner', id FROM permits
+ON CONFLICT (role_id, permit_id) DO NOTHING;
+
+-- 2. add permits to manager
+INSERT INTO permit_in_role (role_id, permit_id)
+SELECT 'manager', id FROM permits
+WHERE id LIKE 'menu:%' OR id LIKE 'drink:%' OR id LIKE 'dish:%' OR id LIKE 'employee:%' OR id='manager:info'
+ON CONFLICT (role_id, permit_id) DO NOTHING;
+
+-- 3. add permit onboard to 'employee'
+INSERT INTO permit_in_role (role_id, permit_id)
+VALUES 
+('employee', 'menu:onboard'),
+('employee', 'employee:info')
+ON CONFLICT (role_id, permit_id) DO NOTHING;
+
+INSERT INTO opening_hours (day_of_week, opens_at, closes_at)
+VALUES
+(0,null,null),
+(1,null,null),
+(2,null,null),
+(3,null,null),
+(4,null,null),
+(5,null,null),
+(6,null,null)
+ON CONFLICT (day_of_week) DO NOTHING;
+
+-- TODO: add default categories
+INSERT INTO categories(id, display_name, description)
+VALUES 
+('drink', 'Напої', ''),
+('dessert', 'Десерти', ''),
+('vegeterian', 'Для вегетеріанців', 'Страви які підійдуть вегетеріанцям'),
+('burger', 'Бургери', ''),
+('salat', 'Салати', ''),
+('fried', 'Смажене', 'все що з фретюру'),
+('snack', 'Снеки', 'якісь смаколики'),
+('kombomenu', 'Комбо-меню', ''),
+('souse', 'Соуси', ''),
+('special', 'Спеціальні пропозиції', ''),
+('spicy', 'Гостре', 'для тих хто любить гостре'),
+('helthy', 'Здорова Їжа', 'те що міг би дозволити лікар')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO delivery_prices (min_order, delivery_price, distance)
+VALUES 
+(150, 50.00, 2000),
+(200, 25.00, 2000),
+(150, 75.00, 2500),
+(200, 50.00, 2500),
+(250, 25.00, 2500),
+(150, 100.00, 3500),
+(200, 75.00, 3500),
+(250, 50.00, 3500),
+(350, 25.00, 3500),
+(250, 100.00, 4000),
+(350, 50.00, 4000),
+(400, 25.00, 4000)
+ON CONFLICT DO NOTHING;

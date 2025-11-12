@@ -14,7 +14,7 @@ async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
     app.enableCors({
       origin: [
-        defaultConstants.domains.ADMIN,
+        ...defaultConstants.domains.ADMIN,
         ...defaultConstants.domains.CLIENT,
       ],
       credentials: true,

@@ -48,6 +48,10 @@ export class TokenJob {
         expiresIn = defaultConstants.time.ONE_DAY / 1000;
         break;
 
+      case TokenPayloadEnum.VERIFY:
+        expiresIn = 45 * 60;
+        break;
+
       case TokenPayloadEnum.TEST:
         expiresIn = 3;
         break;

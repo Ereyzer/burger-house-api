@@ -34,7 +34,7 @@ export class PermissionsGuard implements CanActivate {
       throw new ForbiddenException('plese ask yor manager about your role');
 
     const isRole = await this.roleService.findOne(user.role);
-    if (!isRole) throw new ForbiddenException('your role dos not have prmits');
+    if (!isRole) throw new ForbiddenException('your role does not have prmits');
 
     if (!isRole.permits.includes(requiredPermission))
       throw new ForbiddenException();
