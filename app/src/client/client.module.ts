@@ -6,12 +6,14 @@ import { ClientMenu } from './entities/clientMenu.entity';
 import { OrdersBaseModule } from '../modules/orders/ordersBase.module';
 import { MenuModule } from '../admin/menu/menu.module';
 import { AboutModule } from '../admin/about/about.module';
+import { GoogleMapsModule } from '../modules/google-maps/google-maps.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ClientMenu]),
     OrdersBaseModule,
     MenuModule,
     AboutModule,
+    GoogleMapsModule,
   ],
   controllers: [ClientController],
   providers: [ClientService],

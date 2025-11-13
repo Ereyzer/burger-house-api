@@ -17,22 +17,22 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - db
+      - cockroachdb
       - migrator
 
-  db:
-    image: postgres:latest
-    container_name: postgres-db
+  cockroachdb:
+    image: cockroachdb/cockroach:v24.2.0
+    container_name: cockroachdb
     restart: unless-stopped
-    shm_size: 128mb
+    # command: start-single-node --insecure --listen-addr=127.0.0.1 --http-addr=127.0.0.1:8080
+    command: start-single-node --insecure
     env_file:
       - ./.env
     volumes:
-      # do not need now
-      - postgres-data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - cockroach-data:/cockroach/cockroach-data
     ports:
-      - ${DB_PORT}:${DB_PORT}
+      - ${DB_PORT}:${DB_PORT} # SQL порт CockroachDB
+      - "8080:8080"
 
   migrator:
     image: flyway/flyway:latest
@@ -40,27 +40,20 @@ services:
     env_file:
       - ./.env
     command: >
-      -url=jdbc:postgresql://db:${DB_PORT}/${POSTGRES_DB}
-      -user=${POSTGRES_USER}
-      -password=${POSTGRES_PASSWORD}
+      -url=jdbc:postgresql://cockroachdb:${DB_PORT}/defaultdb?sslmode=disable
+      -user=${DB_USER}
+      -password=${DB_PASSWORD}
       -baselineOnMigrate=true
+      -connectRetries=10
+      -connectRetriesInterval=5
       migrate
     volumes:
       - ./database/migrations:/flyway/sql
     depends_on:
-      - db
+      - cockroachdb
 
-  adminer:
-    image: adminer:latest
-    container_name: db-adminer
-    restart: unless-stopped
-    ports:
-      - 8080:8080
-    depends_on:
-      - db
-
-      # - redis
-      # TODO: when it is start be important
+  # - redis
+  # TODO: when it is start be important
 # redis:
 #   image: redis:8.2.1-alpine
 #   container_name: redis-cache
@@ -71,5 +64,7 @@ services:
 #     - 6379:6379
 
 volumes:
-  postgres-data:
+  cockroach-data:
+# volumes:
+#   postgres-data:
 # redis-data:

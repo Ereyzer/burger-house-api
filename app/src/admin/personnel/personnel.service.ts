@@ -67,7 +67,7 @@ export class PersonnelService {
 
   async update(
     id: number,
-    { ...updatePersonnel }: UpdatePersonnelDto,
+    { ...updatePersonnel }: { verified: boolean } | UpdatePersonnelDto,
   ): Promise<Personnel> {
     const user = await this.findOne(id);
     if (!user) throw new NotFoundException('user not exist');

@@ -5,6 +5,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { MenuItemInOrder } from './menuItemInOrder.entity';
 import { OrderStatus, PaymentMethod } from '../types/enums';
@@ -23,8 +24,7 @@ export class Order {
   })
   public createdAt: Date;
   // updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
-  // has trigger auto update
-  @Column({
+  @UpdateDateColumn({
     name: 'updated_at',
     type: 'timestamp without time zone',
     default: () => 'NOW()',
@@ -42,6 +42,15 @@ export class Order {
   // amount DECIMAL(7,2) NOT NULL,
   @Column({ type: 'decimal', precision: 7, scale: 2, nullable: false })
   amount: number;
+
+  @Column({
+    name: 'delivery_price',
+    type: 'decimal',
+    precision: 4,
+    scale: 2,
+    default: 0.0,
+  })
+  deliveryPrice: number;
   // enc_phone VARCHAR(255) NOT NULL,
   @Column({ name: 'enc_phone', type: 'varchar', length: 255, nullable: false })
   public phone: string;
@@ -57,8 +66,8 @@ export class Order {
   @Column({ type: 'boolean', nullable: false })
   delivery: boolean;
   // street VARCHAR(100) NOT NULL,
-  @Column({ type: 'varchar', length: 100, nullable: false })
-  street: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  street: string | null;
   // status order_status NOT NULL DEFAULT 'pending',
   @Column({
     type: 'enum',
@@ -104,5 +113,8 @@ export class Order {
   @AfterLoad()
   priceToNumber() {
     this.amount = Number.parseFloat(this.amount as unknown as string);
+    this.deliveryPrice = Number.parseFloat(
+      this.deliveryPrice as unknown as string,
+    );
   }
 }

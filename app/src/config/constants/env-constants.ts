@@ -11,17 +11,25 @@ export const envVars = createEnvVars({
   PASSWORD_PEPPER: 'PASSWORD_PEPPER',
   JWT_SECRET_KEY: 'JWT_SECRET_KEY',
   NODE_ENV: 'NODE_ENV',
+  MAILER_SEND_TOKEN: 'MAILER_SEND_TOKEN',
+  GOOGLE_MAPS_KEY: 'GOOGLE_MAPS_KEY',
+  PHONE_SALT: 'PHONE_SALT',
 });
-
+const NODE_ENV = getEnvVars(envVars.NODE_ENV);
 export const envVarValue = {
+  // [envVars.NODE_ENV]: getEnvVars(envVars.NODE_ENV),
+  NODE_ENV,
   [envVars.APP_PORT]: Number(getEnvVars(envVars.APP_PORT)),
   [envVars.DB_HOST]: getEnvVars(envVars.DB_HOST),
   [envVars.DB_PORT]: Number(getEnvVars(envVars.DB_PORT)),
   [envVars.DB_USERNAME]: getEnvVars(envVars.DB_USERNAME),
-  [envVars.DB_PASSWORD]: getEnvVars(envVars.DB_PASSWORD),
+  [envVars.DB_PASSWORD]:
+    NODE_ENV !== 'development' ? getEnvVars(envVars.DB_PASSWORD) : undefined,
   [envVars.DB_DATABASE]: getEnvVars(envVars.DB_DATABASE),
   [envVars.PASSWORD_PEPPER]: getEnvVars(envVars.PASSWORD_PEPPER),
   [envVars.CIPER_SALT]: getEnvVars(envVars.CIPER_SALT),
   [envVars.JWT_SECRET_KEY]: getEnvVars(envVars.JWT_SECRET_KEY),
-  [envVars.NODE_ENV]: getEnvVars(envVars.NODE_ENV),
+  [envVars.MAILER_SEND_TOKEN]: getEnvVars(envVars.MAILER_SEND_TOKEN),
+  [envVars.GOOGLE_MAPS_KEY]: getEnvVars(envVars.GOOGLE_MAPS_KEY),
+  [envVars.PHONE_SALT]: getEnvVars(envVars.PHONE_SALT),
 };

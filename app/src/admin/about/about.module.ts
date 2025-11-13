@@ -4,9 +4,10 @@ import { AboutController } from './about.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { About } from './entities/about.entity';
 import { OpeningHour } from './entities/openingTime.entity';
+import { DeliveryPrices } from './entities/deliveryPrices.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([About, OpeningHour])],
+  imports: [TypeOrmModule.forFeature([About, OpeningHour, DeliveryPrices])],
   controllers: [AboutController],
   providers: [AboutService],
   exports: [AboutService],

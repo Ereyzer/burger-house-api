@@ -5,11 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { calculatePaginationData } from '../utils/calculatePaginationParams.utils';
 import { OrdersService } from '../modules/orders/orders.service';
 import { CreateOrderDto } from '../modules/orders/dto/create-order.dto';
-import { OrdersGateway } from '../modules/orders/orders.gateway';
 import { CountPriceDto } from './dto/countPrice.dt';
 import { MenuService } from '../admin/menu/menu.service';
 import { totalPriceCalculator } from '../utils/totalPriceCalculator';
 import { AboutService } from '../admin/about/about.service';
+import { PriceMath } from '../utils/mathWithPrices';
 
 @Injectable()
 export class ClientService {
@@ -18,8 +18,8 @@ export class ClientService {
     private readonly clientMenu: Repository<ClientMenu>,
     private readonly menuService: MenuService,
     private readonly orderService: OrdersService,
-    private readonly ordersGateway: OrdersGateway,
     private readonly aboutService: AboutService,
+    // private readonly ordersGateway: OrdersGateway,
   ) {}
 
   async findAll(page: number, take: number, category?: string) {
@@ -81,11 +81,18 @@ export class ClientService {
   }
 
   async newOrder(createOrderDto: CreateOrderDto) {
+    const { total, delivery } = await this.totalPrice(
+      [...createOrderDto.selections],
+      createOrderDto.delivery,
+      createOrderDto.distance,
+    );
+    createOrderDto.amount = total;
+    createOrderDto.deliveryPrice = delivery;
     const order = await this.orderService.create(createOrderDto);
-    order.amount = (
-      await this.totalPrice([...createOrderDto.selections])
-    ).total;
-    this.ordersGateway.pushNewOrder(order).catch(() => {});
+
+    // order.amount = total;
+    // order.deliveryPrice = delivery;
+    // this.ordersGateway.pushNewOrder(order).catch(() => {});
     return {
       status: order.status,
       id: order.id,
@@ -94,7 +101,11 @@ export class ClientService {
     };
   }
 
-  async totalPrice(items: CountPriceDto['items']) {
+  async totalPrice(
+    items: CountPriceDto['items'],
+    isDelivery: CountPriceDto['isDelivery'],
+    distance?: CountPriceDto['distance'],
+  ) {
     const ids: number[] = [];
     const quantityObj = items.reduce(
       (acc, item) => {
@@ -104,10 +115,40 @@ export class ClientService {
       },
       {} as { [key: number]: number },
     );
-    const menuItems = await this.menuService.findByIds(ids, ['price']);
+    const [menuItems, deliveryPrices] = await Promise.all([
+      this.menuService.findByIds(ids, ['price']),
+      this.aboutService.getDeliveryPrices(),
+    ]);
 
-    const total = totalPriceCalculator(menuItems, quantityObj);
+    const subTotal = totalPriceCalculator(menuItems, quantityObj);
+    const discont = 0;
+    const deliveryDistance = distance || deliveryPrices[0].distance;
+    const outOfDistance = !isDelivery
+      ? false
+      : !distance ||
+        distance > deliveryPrices[deliveryPrices.length - 1].distance;
+    let tmpDistance = 0;
+    const delivery = !isDelivery
+      ? 0
+      : deliveryPrices.find((option) => {
+          if (
+            !(
+              (deliveryDistance > tmpDistance &&
+                deliveryDistance < option.distance) ||
+              option.distance === tmpDistance
+            )
+          )
+            return false;
 
-    return { total };
+          if (subTotal < option.minOrder) return true;
+
+          tmpDistance = option.distance;
+          return false;
+        })?.deliveryPrice || 0;
+
+    const priceWithDelivery = PriceMath.add(subTotal, delivery);
+    const total = PriceMath.minus(priceWithDelivery, discont);
+
+    return { total, discont, delivery, subTotal, outOfDistance };
   }
 }

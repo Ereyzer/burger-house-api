@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { OrdersGateway } from './orders.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { MenuItemInOrder } from './entities/menuItemInOrder.entity';
@@ -18,7 +17,7 @@ import { RolesModule } from '../../admin/roles/roles.module';
     ]),
   ],
   controllers: [],
-  providers: [OrdersGateway, OrdersService, CipherAndHashService],
-  exports: [OrdersService, OrdersGateway],
+  providers: [OrdersService, CipherAndHashService],
+  exports: [OrdersService],
 })
 export class OrdersBaseModule {}

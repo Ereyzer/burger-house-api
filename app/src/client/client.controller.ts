@@ -5,10 +5,14 @@ import { ApiOkResponse } from '@nestjs/swagger';
 import { CreateOrderDto } from '../modules/orders/dto/create-order.dto';
 import { Post } from '@nestjs/common';
 import { CountPriceDto } from './dto/countPrice.dt';
+import { GoogleMapsService } from '../modules/google-maps/google-maps.service';
 
 @Controller('client')
 export class ClientController {
-  constructor(private readonly clientService: ClientService) {}
+  constructor(
+    private readonly clientService: ClientService,
+    private readonly googleMapsService: GoogleMapsService,
+  ) {}
 
   // get all menu item with pagination and sort by (price, popular) and filter by category
   @Get('menu')
@@ -63,7 +67,24 @@ export class ClientController {
   }
 
   @Post('newOrder/totalPrice')
-  totalPrice(@Body() { items }: CountPriceDto) {
-    return this.clientService.totalPrice(items);
+  totalPrice(@Body() { items, isDelivery, distance }: CountPriceDto) {
+    return this.clientService.totalPrice(items, isDelivery, distance);
+  }
+
+  @Get('street/autocomplete')
+  autocomplete(@Query('q') query: string) {
+    return this.googleMapsService.autocomplete(query);
+  }
+
+  @ApiOkResponse({
+    example: { distanceMeters: 2325, duration: '334s' },
+  })
+  @Post('distance')
+  distance(
+    @Body() { street, houseNumber }: { street: string; houseNumber: string },
+  ) {
+    return this.googleMapsService.getDistanceMatrix(
+      `${street.split(' ').join('%20')}%20${houseNumber}`,
+    );
   }
 }

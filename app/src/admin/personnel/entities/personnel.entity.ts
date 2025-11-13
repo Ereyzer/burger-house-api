@@ -19,6 +19,9 @@ export class Personnel {
   @Column({ type: 'varchar', length: 255, unique: true, nullable: false })
   email: string;
 
+  //  verified BOOLEAN NOT NULL DEFAULT FALSE,
+  @Column({ type: 'boolean', nullable: false, default: false })
+  verified: boolean;
   // password_id INTEGER NOT NULL REFERENCES passwords (id),
   @OneToOne(() => Password, {
     nullable: false,

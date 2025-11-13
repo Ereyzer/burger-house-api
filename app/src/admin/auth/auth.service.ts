@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -13,6 +14,8 @@ import { LessThan, Repository } from 'typeorm';
 import { TokenPayloadEnum } from '../../enum/token-payload.enum';
 import { defaultConstants } from '../../config/constants/default-constants';
 import { TokenJob } from '../../helpers/tokenJob';
+import { MailerSendService } from '../../services/mailerSendService.service';
+import { BaseTokenPayload } from '../../interface/base-token-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +25,7 @@ export class AuthService {
     @InjectRepository(Session)
     private readonly sessionRepository: Repository<Session>,
     private readonly cipher: CipherAndHashService,
+    private readonly mailerSend: MailerSendService,
   ) {}
 
   async signIn({ email, password }: LoginAuthDto) {
@@ -141,12 +145,14 @@ export class AuthService {
     }
   }
 
-  async clearExpired(): Promise<void> {
-    await this.sessionRepository.delete({
-      updated_at: LessThan(
-        new Date(Date.now() - defaultConstants.time.ONE_DAY),
-      ),
-    });
+  clearExpired(): void {
+    this.sessionRepository
+      .delete({
+        updated_at: LessThan(
+          new Date(Date.now() - defaultConstants.time.ONE_DAY),
+        ),
+      })
+      .catch(() => {});
   }
 
   async logout(at: string, rt: string): Promise<void> {
@@ -174,11 +180,22 @@ export class AuthService {
   async createOwner({ email, password }: LoginAuthDto): Promise<string> {
     const user = await this.personnelService.create({ email, password });
     if (!user) throw new InternalServerErrorException();
+    console.log(user);
+    const secret = this.cipher.generateSalt(16);
+    const token = this.tokenJob.createJwtToken({
+      sub: user.id,
+      secret,
+      role: defaultConstants.roles.OWNER,
+      tokenType: TokenPayloadEnum.VERIFY,
+    });
 
     try {
       await this.personnelService.updateRole(user.id, {
         role: defaultConstants.roles.OWNER,
       });
+
+      await this.mailerSend.sendVereficationEmail(email, token);
+
       return 'You is owner now, check your email';
     } catch {
       await this.personnelService.remove(user.id);
@@ -188,5 +205,21 @@ export class AuthService {
 
   removeUserSessions(id: number) {
     return this.sessionRepository.delete({ personnel_id: id });
+  }
+
+  async verifyEmail(payload: BaseTokenPayload) {
+    const isVerified = await this.personnelService.findOne(+payload.sub);
+
+    if (isVerified?.verified)
+      throw new BadRequestException('Your verefication is succes');
+
+    try {
+      await this.personnelService.update(+payload.sub, {
+        verified: true,
+      });
+      return true;
+    } catch {
+      throw new InternalServerErrorException();
+    }
   }
 }

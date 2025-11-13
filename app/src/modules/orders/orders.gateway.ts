@@ -1,6 +1,5 @@
 import {
   SubscribeMessage,
-  // MessageBody,
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -9,8 +8,6 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { OrdersService } from './orders.service';
-// import { CreateOrderDto } from './dto/create-order.dto';
-// import { UpdateOrderDto } from './dto/update-order.dto';
 import { Server } from 'socket.io';
 import { Order } from './entities/order.entity';
 import {
@@ -29,7 +26,7 @@ import { PermissionsEnum } from '../../enum/permissions.enum';
 @WebSocketGateway({
   namespace: 'orders',
   cors: {
-    origin: [defaultConstants.domains.ADMIN],
+    origin: [...defaultConstants.domains.ADMIN],
     credentials: true,
   },
 })
@@ -115,7 +112,6 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
         ...client.user,
         exp: (payload as { exp: string } & typeof payload).exp,
       };
-      console.log('token approve');
 
       // TODO: expired token
       const expiresInMs = Number(client.user.exp) * 1000 - Date.now();
@@ -131,6 +127,13 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }, expiresInMs);
     } catch (error) {
       const er = error as Error;
+      if (er.message === 'TokenExpiredError') {
+        client.emit(
+          'tokenExpired',
+          new UnauthorizedException('Session expired, please refresh token.'),
+        );
+        return;
+      }
       client.emit('error', new UnauthorizedException(er.message));
 
       return client.disconnect(true);
@@ -142,50 +145,3 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('new user');
   }
 }
-
-// TODO: next step push actual info about order to client
-// @WebSocketGateway({
-//   namespace: 'client/order',
-//   cors: {
-//     origin: [defaultConstants.domains.CLIENT],
-//     credentials: false,
-//   },
-// })
-// export class ClientOrderWsGateway implements OnGatewayConnection {
-//   constructor() {}
-//   @WebSocketServer()
-//   server: Server;
-
-//   handleConnection(
-//     _client: Socket,
-//     //  ...args: any[]
-//   ) {}
-// }
-// @SubscribeMessage('createOrder')
-// create(@MessageBody() createOrderDto: CreateOrderDto) {
-//   return this.ordersService.create(createOrderDto);
-// }
-
-// @SubscribeMessage('findAllOrders')
-// findAll() {
-//   return this.ordersService.findAll();
-// }
-// @SubscribeMessage('findOneOrder')
-// async findOne(@MessageBody() id: number) {
-//   console.log('here');
-
-//   return this.server.emit(
-//     'findedNewOneOrder',
-//     await this.ordersService.findOne(id),
-//   );
-// }
-
-// @SubscribeMessage('updateOrder')
-// update(@MessageBody() updateOrderDto: UpdateOrderDto) {
-//   return this.ordersService.update(updateOrderDto.id, updateOrderDto);
-// }
-
-// @SubscribeMessage('removeOrder')
-// remove(@MessageBody() id: number) {
-//   return this.ordersService.remove(id);
-// }

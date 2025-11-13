@@ -5,6 +5,7 @@ import { About } from './entities/about.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OpeningHour } from './entities/openingTime.entity';
 import { UpdateOpeningHoursDto } from './dto/updateOpeningHours.dto';
+import { DeliveryPrices } from './entities/deliveryPrices.entity';
 
 @Injectable()
 export class AboutService {
@@ -13,10 +14,15 @@ export class AboutService {
     private readonly aboutRepository: Repository<About>,
     @InjectRepository(OpeningHour)
     private readonly openingHoursRepository: Repository<OpeningHour>,
+    @InjectRepository(DeliveryPrices)
+    private readonly deliveryPricesRepository: Repository<DeliveryPrices>,
   ) {}
 
-  findOne() {
-    return this.aboutRepository.findOneBy({ id: 1 });
+  async findOne() {
+    return {
+      ...(await this.aboutRepository.findOne({ where: { id: 1 } })),
+      openningHours: await this.getOpeningHours(),
+    };
   }
 
   upsert(updateAboutDto: UpdateAboutDto) {
@@ -38,5 +44,10 @@ export class AboutService {
   }
   getOpeningHours() {
     return this.openingHoursRepository.find({ order: { dayOfWeek: 'ASC' } });
+  }
+  getDeliveryPrices() {
+    return this.deliveryPricesRepository.find({
+      order: { distance: 'ASC', minOrder: 'ASC' },
+    });
   }
 }

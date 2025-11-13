@@ -18,7 +18,7 @@ export class DayOfWeekDto {
   @IsAlphanumeric()
   dayOfWeek: string;
 }
-const timePattern = '^(([01][0-9])|(2[0-3])):([0-5][0-9])$';
+const timePattern = '^(([01][0-9])|(2[0-3])):([0-5][0-9])(:([0-5][0-9]))?$';
 const timeRegExp = new RegExp(timePattern);
 
 export class UpdateOpeningHoursDto {

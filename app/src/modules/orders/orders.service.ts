@@ -3,7 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { MenuItemInOrder } from './entities/menuItemInOrder.entity';
 import { CustomerOrderPhoneEntity } from './entities/customerOrderPhone.entity';
 import { CipherAndHashService } from '../../services/CipherAndHash.service';
@@ -11,6 +11,7 @@ import { calculatePaginationData } from '../../utils/calculatePaginationParams.u
 import { BadRequestException } from '@nestjs/common';
 import { OrderStatus } from './types/enums';
 import { InternalServerErrorException } from '@nestjs/common';
+import { envVarValue } from '../../config/constants/env-constants';
 
 @Injectable()
 export class OrdersService {
@@ -24,25 +25,19 @@ export class OrdersService {
     private readonly dataSource: DataSource,
     private readonly cipher: CipherAndHashService,
   ) {}
-  async create({ selections, ...createOrderDto }: CreateOrderDto) {
+  async create({ selections, phone, ...createOrderDto }: CreateOrderDto) {
     const queryRanner = this.dataSource.createQueryRunner();
     await queryRanner.connect();
     await queryRanner.startTransaction();
 
     try {
-      const item = await queryRanner.manager.save(
-        queryRanner.manager.create(Order, createOrderDto),
-      );
+      const [item, hashPhoneAll] = await Promise.all([
+        queryRanner.manager.save(
+          queryRanner.manager.create(Order, { ...createOrderDto, phone }),
+        ),
+        this.cipher.createHash(phone, envVarValue.PHONE_SALT),
+      ]);
 
-      await queryRanner.manager
-        .createQueryBuilder()
-        .insert()
-        .into(CustomerOrderPhoneEntity)
-        .values({
-          hashPhone: () => `crypt('${createOrderDto.phone}', gen_salt('bf'))`,
-          orderId: item.id,
-        })
-        .execute();
       const subItems = selections.map(({ id, quantity }) =>
         queryRanner.manager.create(MenuItemInOrder, {
           order_id: item.id,
@@ -50,8 +45,19 @@ export class OrdersService {
           quantity,
         }),
       );
-      item.selections = await queryRanner.manager.save(subItems);
-
+      const [sel] = await Promise.all([
+        queryRanner.manager.save(subItems),
+        queryRanner.manager
+          .createQueryBuilder()
+          .insert()
+          .into(CustomerOrderPhoneEntity)
+          .values({
+            hashPhone: hashPhoneAll.slice(0, 29),
+            orderId: item.id,
+          })
+          .execute(),
+      ]);
+      item.selections = sel;
       await queryRanner.commitTransaction();
       return item;
     } catch {
@@ -73,26 +79,19 @@ export class OrdersService {
     order: 'DESC' | 'ASC' = 'DESC',
   ) {
     const skip = (page - 1) * take;
+    const hashPhone = (
+      await this.cipher.createHash(phone, envVarValue.PHONE_SALT)
+    ).slice(0, 29);
 
     const [totalItems, items] = await Promise.all([
       this.customerPhoneHashRepository
         .createQueryBuilder('cph')
-        .where(`cph.hash_phone = crypt(:phone, cph.hash_phone)`, { phone })
+        .where('cph.hash_phone = :hashPhone', { hashPhone })
         .getCount(),
       this.customerPhoneHashRepository
         .createQueryBuilder('cph')
         .innerJoin('cph.order', 'o', 'cph.order_id = o.id')
-        // .leftJoin('o.selections', 'selections')
-        // .addSelect([
-        //   'selections.quantity',
-        //   'selections.createdAt',
-        //   'selections.selection',
-        // ])
-        // .leftJoinAndSelect('selections.selection', 'selection')
-        // .leftJoinAndSelect('selection.drinks', 'drinks')
-        // .leftJoinAndSelect('selection.dishes', 'dishes')
-        // .leftJoinAndSelect('selection.categories', 'categories')
-        .where(`cph.hash_phone = crypt(:phone, cph.hash_phone)`, { phone })
+        .where('cph.hash_phone = :hashPhone', { hashPhone })
         .select([
           'o.id AS id',
           'o.createdAt AS createdAt',
@@ -135,6 +134,15 @@ export class OrdersService {
       throw new BadRequestException(`page ${page} not exist`);
 
     return { items, ...paginatioData };
+  }
+
+  async findActual() {
+    const items = await this.orderRepository.find({
+      where: { status: Not(OrderStatus.DELIVERED) },
+      order: { createdAt: 'DESC' },
+    });
+
+    return items;
   }
 
   async findOne(id: number) {

@@ -108,6 +108,16 @@ export class RolesService {
     return { ...response, permits: response.permits.split(',') };
   }
 
+  async checkPermitInRole(role_id: string, permit_id: string) {
+    const response = await this.permitInRoleRepository.find({
+      where: {
+        permit_id,
+        role_id,
+      },
+    });
+    return response;
+  }
+
   // TODO:
   async update(
     id: string,

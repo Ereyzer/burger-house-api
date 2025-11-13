@@ -14,7 +14,7 @@ async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
     app.enableCors({
       origin: [
-        defaultConstants.domains.ADMIN,
+        ...defaultConstants.domains.ADMIN,
         ...defaultConstants.domains.CLIENT,
       ],
       credentials: true,
@@ -43,6 +43,16 @@ async function bootstrap(): Promise<void> {
       .build();
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, documentFactory);
+    setInterval(() => {
+      const used = process.memoryUsage();
+      console.log(
+        `Memory: RSS=${(used.rss / 1024 / 1024).toFixed(2)} MB, HeapUsed=${(
+          used.heapUsed /
+          1024 /
+          1024
+        ).toFixed(2)} MB`,
+      );
+    }, 10000);
 
     await app.listen(envVarValue[envVars.APP_PORT], () => {
       console.log(`server run on port: ${envVarValue[envVars.APP_PORT]}`);
