@@ -153,8 +153,6 @@ COMMENT ON TABLE dishes IS 'there is dishes we can chse for menu';
 
 CREATE INDEX IF NOT EXISTS idx_menu_oboard ON menu (onboard);
 
-CREATE INDEX IF NOT EXISTS idx_menu_category_id ON menu (category_id);
-
 COMMENT ON TABLE menu IS 'there you can comdine dishes and drinks to some menu positions';
 COMMENT ON COLUMN menu.price IS 'max price is 9999.99';
 COMMENT ON COLUMN menu.onboard IS 'if this position is available';
@@ -226,6 +224,7 @@ CREATE TABLE IF NOT EXISTS menu_in_category (
 );
 
 COMMENT ON TABLE menu_in_category IS 'this table explain wich dish in which category';
+
 
 -- TODO: sessions
 
