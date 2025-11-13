@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { calculatePaginationData } from '../utils/calculatePaginationParams.utils';
 import { OrdersService } from '../modules/orders/orders.service';
 import { CreateOrderDto } from '../modules/orders/dto/create-order.dto';
-import { OrdersGateway } from '../modules/orders/orders.gateway';
 import { CountPriceDto } from './dto/countPrice.dt';
 import { MenuService } from '../admin/menu/menu.service';
 import { totalPriceCalculator } from '../utils/totalPriceCalculator';
@@ -19,8 +18,8 @@ export class ClientService {
     private readonly clientMenu: Repository<ClientMenu>,
     private readonly menuService: MenuService,
     private readonly orderService: OrdersService,
-    private readonly ordersGateway: OrdersGateway,
     private readonly aboutService: AboutService,
+    // private readonly ordersGateway: OrdersGateway,
   ) {}
 
   async findAll(page: number, take: number, category?: string) {
@@ -93,7 +92,7 @@ export class ClientService {
 
     // order.amount = total;
     // order.deliveryPrice = delivery;
-    this.ordersGateway.pushNewOrder(order).catch(() => {});
+    // this.ordersGateway.pushNewOrder(order).catch(() => {});
     return {
       status: order.status,
       id: order.id,

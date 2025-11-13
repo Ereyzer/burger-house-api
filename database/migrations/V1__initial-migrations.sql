@@ -151,6 +151,10 @@ COMMENT ON TABLE dishes IS 'there is dishes we can chse for menu';
     UNIQUE (title, subtitle)
   );
 
+CREATE INDEX IF NOT EXISTS idx_menu_oboard ON menu (onboard);
+
+CREATE INDEX IF NOT EXISTS idx_menu_category_id ON menu (category_id);
+
 COMMENT ON TABLE menu IS 'there you can comdine dishes and drinks to some menu positions';
 COMMENT ON COLUMN menu.price IS 'max price is 9999.99';
 COMMENT ON COLUMN menu.onboard IS 'if this position is available';
@@ -277,6 +281,7 @@ CREATE TABLE IF NOT EXISTS orders (
     enc_email VARCHAR(255) DEFAULT NULL
 );
 
+CREATE INDEX IF NOT EXISTS idx_orders_create_at ON orders (created_at);
 
 CREATE TABLE IF NOT EXISTS customer_order_phone_hashes (
 hash_phone CHAR(31) NOT NULL,
