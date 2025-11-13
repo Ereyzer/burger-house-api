@@ -24,8 +24,13 @@ describe('paranoic', () => {
   });
 
   describe('service defined', () => {
-    it('should be defined', () => {
+    it('should be defined', async () => {
       expect(service).toBeDefined();
+      const hash = await service.createHash('lckquvdsivwiudnscoweidsm', 10);
+      console.log(hash);
+      console.log(hash.slice(-31));
+      console.log(hash.slice(0, 29));
+      console.log(service.generateSalt(32));
     });
   });
 
