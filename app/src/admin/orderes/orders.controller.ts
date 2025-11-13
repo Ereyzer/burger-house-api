@@ -31,6 +31,11 @@ export class OrdersController {
     return this.ordersService.findAll(page, perPage);
   }
 
+  @Get('/actual')
+  findActual() {
+    return this.ordersService.findActual();
+  }
+
   @RequirePermission(PermissionsEnum.ORDER_READ)
   @Get('/:id')
   findOne(@Param('id') id: number) {

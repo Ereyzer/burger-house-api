@@ -3,7 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { MenuItemInOrder } from './entities/menuItemInOrder.entity';
 import { CustomerOrderPhoneEntity } from './entities/customerOrderPhone.entity';
 import { CipherAndHashService } from '../../services/CipherAndHash.service';
@@ -134,6 +134,15 @@ export class OrdersService {
       throw new BadRequestException(`page ${page} not exist`);
 
     return { items, ...paginatioData };
+  }
+
+  async findActual() {
+    const items = await this.orderRepository.find({
+      where: { status: Not(OrderStatus.DELIVERED) },
+      order: { createdAt: 'DESC' },
+    });
+
+    return items;
   }
 
   async findOne(id: number) {

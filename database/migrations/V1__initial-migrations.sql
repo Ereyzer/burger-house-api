@@ -282,6 +282,8 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 CREATE INDEX IF NOT EXISTS idx_orders_create_at ON orders (created_at);
+CREATE INDEX IF NOT EXISTS idx_orders_status_created_at
+ON orders (status, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS customer_order_phone_hashes (
 hash_phone CHAR(31) NOT NULL,
