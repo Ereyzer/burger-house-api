@@ -61,11 +61,12 @@ ENV NODE_ENV='production'
 # ENV CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
 # install dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev
+
 
 # copi dist from build stage
 COPY --from=build /app/dist ./dist
 
 
 # start app
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/main.js"]
