@@ -82,7 +82,7 @@ export class AuthController {
 
   @Get('register/owner')
   async registerOwnerPage(@Res() res: Express.Response) {
-    const root = './src/public';
+    const root = './public';
     if (await this.authService.checkIfFirstTime())
       return res.sendFile('register-owner.html', { root });
     return res.sendFile('nice-try.html', { root });
