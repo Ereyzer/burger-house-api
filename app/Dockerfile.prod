@@ -1,0 +1,71 @@
+# =========================
+# Stage 1: Build
+# =========================
+FROM node:24.11-alpine AS build
+WORKDIR /app
+ENV NODE_ENV='development'
+# copi package.json and package-lock.json for cache
+COPY package*.json ./
+
+# install all dependecies (dev + prod)
+RUN npm ci
+
+# copi all source
+COPY . .
+
+# Build NestJS
+RUN npm run build
+
+# =========================
+# Stage 2: Production
+# =========================
+FROM node:24.11-alpine AS production
+WORKDIR /app
+# get arguments from ENV (Render transmit own ENV vars)
+
+# ARG DB_HOST
+# ARG DB_PORT
+# ARG DB_USERNAME
+# ARG DB_PASSWORD
+# ARG DB_DATABASE
+
+# ARG APP_PORT
+# ARG CIPER_SALT
+# ARG PHONE_SALT
+# ARG PASSWORD_PEPPER
+# ARG JWT_SECRET_KEY
+# ARG MAILER_SEND_TOKEN
+# ARG GOOGLE_MAPS_KEY
+# ARG CLOUDINARY_CLOUD_NAME
+# ARG CLOUDINARY_API_KEY
+# ARG CLOUDINARY_API_SECRET
+
+# change for production mode
+ENV NODE_ENV='production'
+
+# giv ENV in cntainer
+# ENV DB_HOST=${DB_HOST}
+# ENV DB_PORT=${DB_PORT}
+# ENV DB_USERNAME=${DB_USERNAME}
+# ENV DB_PASSWORD=${DB_PASSWORD}
+# ENV DB_DATABASE=${DB_DATABASE}
+# ENV APP_PORT=${APP_PORT}
+# ENV CIPER_SALT=${CIPER_SALT}
+# ENV PHONE_SALT=${PHONE_SALT}
+# ENV PASSWORD_PEPPER=${PASSWORD_PEPPER}
+# ENV JWT_SECRET_KEY=${JWT_SECRET_KEY}
+# ENV MAILER_SEND_TOKEN=${MAILER_SEND_TOKEN}
+# ENV GOOGLE_MAPS_KEY=${GOOGLE_MAPS_KEY}
+# ENV CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+# ENV CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+# ENV CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+# install dependencies
+COPY package*.json ./
+RUN npm ci --only=production
+
+# copi dist from build stage
+COPY --from=build /app/dist ./dist
+
+
+# start app
+CMD ["npm", "run", "start:prod"]
