@@ -1,3 +1,4 @@
+import { getEnvVars } from '../../utils/env.utils';
 import { envVars, envVarValue } from './env-constants';
 
 export const domains = () => {
@@ -17,9 +18,9 @@ export const domains = () => {
       domains.API = 'http://localhost:3000';
       break;
     case 'prod':
-      domains.ADMIN = [envVarValue.DOMAIN_ADMIN];
+      domains.ADMIN = [getEnvVars(envVars.DOMAIN_ADMIN)];
       domains.CLIENT = ['http://localhost:3002'];
-      domains.API = envVarValue.DOMAIN_API;
+      domains.API = getEnvVars(envVars.DOMAIN_API);
       break;
 
     default:
