@@ -188,15 +188,15 @@ export class AuthService {
       role: defaultConstants.roles.OWNER,
       tokenType: TokenPayloadEnum.VERIFY,
     });
-    // await this.mailerSend
-    //   .sendVereficationEmailMailerSend(email, token)
-    //   .catch(() => {
-    //     this.personnelService
-    //       .remove(user.id)
-    //       .then(() => {})
-    //       .catch(() => {});
-    //     throw new InternalServerErrorException();
-    //   });
+    await this.mailerSend
+      .sendVereficationEmailMailerSend(email, token)
+      .catch(() => {
+        this.personnelService
+          .remove(user.id)
+          .then(() => {})
+          .catch(() => {});
+        throw new InternalServerErrorException();
+      });
     const a = await this.mailerSend
       .sendVerificationEmailResend(email, token)
       .catch(() => {

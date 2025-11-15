@@ -17,9 +17,9 @@ export const domains = () => {
       domains.API = 'http://localhost:3000';
       break;
     case 'prod':
-      domains.ADMIN = ['https://burger-house-admin-prew.vercel.app'];
+      domains.ADMIN = [envVarValue.DOMAIN_ADMIN];
       domains.CLIENT = ['http://localhost:3002'];
-      domains.API = 'https://burger-house-api.onrender.com';
+      domains.API = envVarValue.DOMAIN_API;
       break;
 
     default:
