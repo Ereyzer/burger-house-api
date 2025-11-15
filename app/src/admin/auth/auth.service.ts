@@ -188,13 +188,26 @@ export class AuthService {
       role: defaultConstants.roles.OWNER,
       tokenType: TokenPayloadEnum.VERIFY,
     });
-    await this.mailerSend.sendVereficationEmail(email, token).catch(() => {
-      this.personnelService
-        .remove(user.id)
-        .then(() => {})
-        .catch(() => {});
-      throw new InternalServerErrorException();
-    });
+    // await this.mailerSend
+    //   .sendVereficationEmailMailerSend(email, token)
+    //   .catch(() => {
+    //     this.personnelService
+    //       .remove(user.id)
+    //       .then(() => {})
+    //       .catch(() => {});
+    //     throw new InternalServerErrorException();
+    //   });
+    const a = await this.mailerSend
+      .sendVerificationEmailResend(email, token)
+      .catch(() => {
+        this.personnelService
+          .remove(user.id)
+          .then(() => {})
+          .catch(() => {});
+        throw new InternalServerErrorException();
+      });
+    console.log(a);
+
     try {
       await this.personnelService.updateRole(user.id, {
         role: defaultConstants.roles.OWNER,
@@ -212,7 +225,7 @@ export class AuthService {
 
   async verifyEmail(payload: BaseTokenPayload) {
     const isVerified = await this.personnelService.findOne(payload.sub);
-
+    if (!isVerified) throw new BadRequestException();
     if (isVerified?.verified)
       throw new BadRequestException('Your verefication is succes');
 
@@ -220,6 +233,7 @@ export class AuthService {
       await this.personnelService.update(payload.sub, {
         verified: true,
       });
+
       return true;
     } catch {
       throw new InternalServerErrorException();

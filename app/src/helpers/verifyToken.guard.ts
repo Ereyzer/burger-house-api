@@ -30,7 +30,9 @@ export class VerifyTokenGuard implements CanActivate {
       const payload = this.tokenJob.check(token);
       (request as { user: BaseTokenPayload } & Express.Request)['user'] =
         payload;
-    } catch {
+    } catch (e) {
+      console.log(e);
+
       throw new UnauthorizedException();
     }
     return true;
