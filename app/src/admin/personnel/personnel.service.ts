@@ -43,9 +43,11 @@ export class PersonnelService {
       email,
       password: passwordStorage,
     });
+
     try {
       const user = await this.persnnelRepository.save(newUser);
       // TODO: add sending email
+
       return user;
     } catch (error) {
       throw new InternalServerErrorException((error as Error).message);
@@ -56,7 +58,7 @@ export class PersonnelService {
     return await this.persnnelRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     // TODO: next step
     return this.persnnelRepository.findOneBy({ id });
   }
@@ -66,7 +68,7 @@ export class PersonnelService {
   }
 
   async update(
-    id: number,
+    id: string,
     { ...updatePersonnel }: { verified: boolean } | UpdatePersonnelDto,
   ): Promise<Personnel> {
     const user = await this.findOne(id);
@@ -76,11 +78,12 @@ export class PersonnelService {
   }
 
   async updateRole(
-    id: number,
+    id: string,
     { role }: UpdatePersonnelRoleDto,
   ): Promise<void> {
     try {
       await this.persnnelRepository.update(id, { role_id: role });
+
       return;
     } catch (error) {
       const { code, detail } = error as {
@@ -118,7 +121,7 @@ export class PersonnelService {
 
   updatePassword() {}
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException('user not exist');
 

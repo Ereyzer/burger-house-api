@@ -44,7 +44,7 @@ export class PersonnelController {
   @RequirePermission(PermissionsEnum.PERSONNEL_INFO)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.personnelService.findOne(+id);
+    return this.personnelService.findOne(id);
   }
 
   @UseGuards(UpdatePersonalInfoGuard)
@@ -53,7 +53,7 @@ export class PersonnelController {
     @Param('id') id: string,
     @Body() updatePersonnelDto: UpdatePersonnelDto,
   ) {
-    return this.personnelService.update(+id, updatePersonnelDto);
+    return this.personnelService.update(id, updatePersonnelDto);
   }
 
   @RequirePermission(PermissionsEnum.PERSONNEL_ROLE)
@@ -62,7 +62,7 @@ export class PersonnelController {
     @Param('id') id: string,
     @Body() updateRoleDto: UpdatePersonnelRoleDto,
   ) {
-    return this.personnelService.updateRole(+id, updateRoleDto);
+    return this.personnelService.updateRole(id, updateRoleDto);
   }
 
   // TODO: update pictere
@@ -85,6 +85,6 @@ export class PersonnelController {
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
-    return this.personnelService.remove(+id);
+    return this.personnelService.remove(id);
   }
 }

@@ -45,7 +45,7 @@ export class AuthController {
   @Get('login')
   @AuthWithBearerToken()
   getLoggetUser(@Req() req: { user: BaseTokenPayload } & Express.Request) {
-    return this.authService.getLoggetUser(+req.user.sub);
+    return this.authService.getLoggetUser(req.user.sub);
   }
 
   @ApiCookieAuth()

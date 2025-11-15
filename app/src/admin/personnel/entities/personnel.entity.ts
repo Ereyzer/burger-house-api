@@ -11,9 +11,8 @@ import { Password } from './password.entity';
 
 @Entity('personnel')
 export class Personnel {
-  // id SMALLSERIAL PRIMARY KEY,
-  @PrimaryGeneratedColumn('increment', { type: 'smallint' })
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   //   email VARCHAR(255) UNIQUE NOT NULL,
   @Column({ type: 'varchar', length: 255, unique: true, nullable: false })
