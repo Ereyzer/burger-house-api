@@ -55,17 +55,17 @@ COMMENT ON COLUMN permit_in_role.role_id IS 'Ідентифікатор ролі
 COMMENT ON COLUMN permit_in_role.permit_id IS 'Ідентифікатор дозволу, зовнішній ключ до таблиці permits.';
 
 CREATE TABLE IF NOT EXISTS passwords(
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   password CHAR(60) NOT NULL,
   salt CHAR(29) NOT NULL
 );
 
 -- Create table persons
 CREATE TABLE IF NOT EXISTS personnel (
-  id SMALLSERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email VARCHAR(255) UNIQUE NOT NULL,
   verified BOOLEAN NOT NULL DEFAULT FALSE,
-  password_id INTEGER NOT NULL REFERENCES passwords (id),
+  password_id UUID NOT NULL REFERENCES passwords (id),
   enc_phone VARCHAR(255),
   enc_name VARCHAR(255),
   enc_surname VARCHAR(255),
@@ -231,7 +231,7 @@ COMMENT ON TABLE menu_in_category IS 'this table explain wich dish in which cate
 CREATE TABLE IF NOT EXISTS sessions (
 --   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  personnel_id SMALLINT NOT NULL REFERENCES personnel (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  personnel_id UUID NOT NULL REFERENCES personnel (id) ON DELETE CASCADE ON UPDATE CASCADE,
   sas CHAR(32) NOT NULL,
   srs CHAR(32) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),

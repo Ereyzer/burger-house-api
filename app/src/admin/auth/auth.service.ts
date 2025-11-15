@@ -86,7 +86,7 @@ export class AuthService {
     }
   }
 
-  async getLoggetUser(id: number) {
+  async getLoggetUser(id: string) {
     const user = await this.personnelService.findOne(id);
     if (!user) throw new UnauthorizedException();
     return {
@@ -162,7 +162,7 @@ export class AuthService {
       await this.sessionRepository.delete({
         sas,
         srs,
-        personnel_id: Number(sub),
+        personnel_id: sub,
       });
 
       return;
@@ -180,7 +180,7 @@ export class AuthService {
   async createOwner({ email, password }: LoginAuthDto): Promise<string> {
     const user = await this.personnelService.create({ email, password });
     if (!user) throw new InternalServerErrorException();
-    console.log(user);
+
     const secret = this.cipher.generateSalt(16);
     const token = this.tokenJob.createJwtToken({
       sub: user.id,
@@ -188,33 +188,36 @@ export class AuthService {
       role: defaultConstants.roles.OWNER,
       tokenType: TokenPayloadEnum.VERIFY,
     });
-
+    await this.mailerSend.sendVereficationEmail(email, token).catch(() => {
+      this.personnelService
+        .remove(user.id)
+        .then(() => {})
+        .catch(() => {});
+      throw new InternalServerErrorException();
+    });
     try {
       await this.personnelService.updateRole(user.id, {
         role: defaultConstants.roles.OWNER,
       });
 
-      await this.mailerSend.sendVereficationEmail(email, token);
-
       return 'You is owner now, check your email';
     } catch {
-      await this.personnelService.remove(user.id);
       throw new InternalServerErrorException();
     }
   }
 
-  removeUserSessions(id: number) {
+  removeUserSessions(id: string) {
     return this.sessionRepository.delete({ personnel_id: id });
   }
 
   async verifyEmail(payload: BaseTokenPayload) {
-    const isVerified = await this.personnelService.findOne(+payload.sub);
+    const isVerified = await this.personnelService.findOne(payload.sub);
 
     if (isVerified?.verified)
       throw new BadRequestException('Your verefication is succes');
 
     try {
-      await this.personnelService.update(+payload.sub, {
+      await this.personnelService.update(payload.sub, {
         verified: true,
       });
       return true;

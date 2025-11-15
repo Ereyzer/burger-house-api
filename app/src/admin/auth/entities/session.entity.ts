@@ -16,8 +16,8 @@ export class Session {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'smallint', nullable: false })
-  personnel_id: number;
+  @Column({ type: 'uuid', nullable: false })
+  personnel_id: string;
   @ManyToOne(() => Personnel, {
     nullable: false,
     onDelete: 'CASCADE',
