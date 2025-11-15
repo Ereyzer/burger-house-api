@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EmailParams, MailerSend, Recipient, Sender } from 'mailersend';
 import { envVars, envVarValue } from '../config/constants/env-constants';
 import { defaultConstants } from '../config/constants/default-constants';
-import { Resend } from 'resend';
+// import { Resend } from 'resend';
 
 @Injectable()
 export class MailerSendService {
@@ -43,19 +43,19 @@ export class MailerSendService {
     }
   }
 
-  async sendVerificationEmailResend(to: string, token: string) {
-    const resend = new Resend('re_XRBP3Sk5_39NjtVK6DNRCE56uPiHhoWik');
-    console.log(defaultConstants.domains.API);
+  // async sendVerificationEmailResend(to: string, token: string) {
+  //   const resend = new Resend('apiKEY');
+  //   console.log(defaultConstants.domains.API);
 
-    return await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to,
-      subject: 'Підтвердження реєстрації',
-      html: `
-        <h1>Привіт!</h1>
-        <p>Вітаю в команді!!!</p>
-        <a href="${defaultConstants.domains.API}/admin/auth/verify/email/${token}">
-        <strong>Натисни тут для завершення реєстрації.</strong></a>`,
-    });
-  }
+  //   return await resend.emails.send({
+  //     from: 'onboarding@resend.dev',
+  //     to,
+  //     subject: 'Підтвердження реєстрації',
+  //     html: `
+  //       <h1>Привіт!</h1>
+  //       <p>Вітаю в команді!!!</p>
+  //       <a href="${defaultConstants.domains.API}/admin/auth/verify/email/${token}">
+  //       <strong>Натисни тут для завершення реєстрації.</strong></a>`,
+  //   });
+  // }
 }
