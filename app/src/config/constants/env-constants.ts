@@ -14,6 +14,9 @@ export const envVars = createEnvVars({
   MAILER_SEND_TOKEN: 'MAILER_SEND_TOKEN',
   GOOGLE_MAPS_KEY: 'GOOGLE_MAPS_KEY',
   PHONE_SALT: 'PHONE_SALT',
+  DOMAIN_ADMIN: 'DOMAIN_ADMIN',
+  DOMAIN_CLIENT: 'DOMAIN_CLIENT',
+  DOMAIN_API: 'DOMAIN_API',
 });
 const NODE_ENV = getEnvVars(envVars.NODE_ENV);
 export const envVarValue = {
@@ -32,4 +35,6 @@ export const envVarValue = {
   [envVars.MAILER_SEND_TOKEN]: getEnvVars(envVars.MAILER_SEND_TOKEN),
   [envVars.GOOGLE_MAPS_KEY]: getEnvVars(envVars.GOOGLE_MAPS_KEY),
   [envVars.PHONE_SALT]: getEnvVars(envVars.PHONE_SALT),
+  [envVars.DOMAIN_ADMIN]: getEnvVars(envVars.DOMAIN_ADMIN),
+  [envVars.DOMAIN_API]: getEnvVars(envVars.DOMAIN_API),
 };
