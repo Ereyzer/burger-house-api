@@ -22,6 +22,7 @@ export class MailerSendService {
     );
 
     const recipients = [new Recipient(to, 'User')];
+    console.log(defaultConstants.domains.API);
 
     const emailParams = new EmailParams()
       .setFrom(sendForm)
@@ -44,6 +45,7 @@ export class MailerSendService {
 
   async sendVerificationEmailResend(to: string, token: string) {
     const resend = new Resend('re_XRBP3Sk5_39NjtVK6DNRCE56uPiHhoWik');
+    console.log(defaultConstants.domains.API);
 
     return await resend.emails.send({
       from: 'onboarding@resend.dev',
