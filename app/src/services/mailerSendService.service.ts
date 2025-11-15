@@ -14,11 +14,14 @@ export class MailerSendService {
 
   async sendVereficationEmail(to: string, token: string) {
     // TODO: chage mail and app
+
     const sendForm = new Sender(
       'burger-house@test-vz9dlem2yd64kj50.mlsender.net',
       'Burger House',
     );
+
     const recipients = [new Recipient(to, 'User')];
+
     const emailParams = new EmailParams()
       .setFrom(sendForm)
       .setTo(recipients)
@@ -28,6 +31,7 @@ export class MailerSendService {
         <a href="${defaultConstants.domains.API}/admin/auth/verify/email/${token}">
         <strong>Натисни тут для завершення реєстрації.</strong></a>`);
     // <a href="${defaultConstants.domains.API}/admin/auth/verify/email/${token}">
+
     try {
       return await this.mailer.email.send(emailParams);
     } catch (error) {
