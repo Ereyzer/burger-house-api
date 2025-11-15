@@ -16,15 +16,10 @@ export const domains = () => {
       domains.CLIENT = ['http://localhost:3002', 'http://192.168.0.106:3002'];
       domains.API = 'http://localhost:3000';
       break;
-    case 'preprod':
+    case 'prod':
       domains.ADMIN = ['https://burger-house-admin-prew.vercel.app'];
       domains.CLIENT = ['http://localhost:3002'];
       domains.API = 'https://burger-house-api.onrender.com';
-      break;
-    case 'prod':
-      domains.ADMIN = [];
-      domains.CLIENT = [];
-      domains.API = '';
       break;
 
     default:
