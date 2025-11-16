@@ -34,13 +34,13 @@ export class DishController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.dishService.findOne(+id);
+    return this.dishService.findOne(id);
   }
 
   @RequirePermission(PermissionsEnum.DISH_UPDATE)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDishDto: UpdateDishDto) {
-    return this.dishService.update(+id, updateDishDto);
+    return this.dishService.update(id, updateDishDto);
   }
 
   @RequirePermission(PermissionsEnum.DISH_UPDATE)
@@ -49,14 +49,14 @@ export class DishController {
     @Param('id') id: string,
     @Body() updatePrice: UpdateDishPriceDto,
   ) {
-    return this.dishService.updatePrice(+id, updatePrice);
+    return this.dishService.updatePrice(id, updatePrice);
   }
 
   @RequirePermission(PermissionsEnum.DISH_DELETE)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
-    await this.dishService.remove(+id);
+    await this.dishService.remove(id);
     return;
   }
 }

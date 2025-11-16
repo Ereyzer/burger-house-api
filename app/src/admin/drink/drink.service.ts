@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Drink } from './entities/drink.entity';
 import { FindOneOptions, In, Repository, UpdateResult } from 'typeorm';
 import { UpdateDrinkPriceDto } from './dto/update-drink.dto';
+import { InternalServerErrorException } from '@nestjs/common';
 
 @Injectable()
 export class DrinkService {
@@ -15,12 +16,17 @@ export class DrinkService {
   async create(createDrinkDto: CreateDrinkDto) {
     try {
       const drink = this.drinkRepository.create(createDrinkDto);
+      console.log(drink);
+
       return await this.drinkRepository.save(drink);
     } catch (error) {
+      console.log(error);
+
       const { code } = error as { code: string } & Error;
       if (code === '23505') {
         throw new ConflictException('drink alredy exist');
       }
+      throw new InternalServerErrorException();
     }
   }
 
@@ -30,11 +36,11 @@ export class DrinkService {
     });
   }
 
-  findOne(id: number, options: FindOneOptions<Drink> = {}) {
+  findOne(id: string, options: FindOneOptions<Drink> = {}) {
     return this.drinkRepository.findOne({ where: { id }, ...options });
   }
 
-  findMany(ids: number[]) {
+  findMany(ids: string[]) {
     return this.drinkRepository.find({ where: { id: In(ids) } });
   }
 

@@ -83,21 +83,21 @@ export class MenuService {
     });
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.menuRepository.findOne({
       where: { id },
       relations: { categories: true, drinks: true, dishes: true },
     });
   }
 
-  async update(id: number, updateMenuDto: UpdateMenuDto) {
+  async update(id: string, updateMenuDto: UpdateMenuDto) {
     const item = await this.menuRepository.findOneBy({ id });
     if (!item) throw new BadRequestException('Thist item not exist');
 
     return this.menuRepository.save({ ...item, ...updateMenuDto });
   }
 
-  addCategory(menuId: number, categoryId: string) {
+  addCategory(menuId: string, categoryId: string) {
     const relation = this.menuInCategoryRepository.create({
       menu_id: menuId,
       category_id: categoryId,
@@ -105,30 +105,30 @@ export class MenuService {
     return this.menuInCategoryRepository.save(relation);
   }
 
-  rmCategory(menu_id: number, category_id: string) {
+  rmCategory(menu_id: string, category_id: string) {
     return this.menuInCategoryRepository.delete({
       menu_id,
       category_id,
     });
   }
 
-  addDrink(menu_id: number, { drink: drink_id }: AddDrinkInMenuDto) {
+  addDrink(menu_id: string, { drink: drink_id }: AddDrinkInMenuDto) {
     const drink = this.drinkInMenuRepository.create({ menu_id, drink_id });
     return this.drinkInMenuRepository.save(drink);
   }
-  rmDrink(menu_id: number, drink_id: number) {
+  rmDrink(menu_id: string, drink_id: string) {
     return this.drinkInMenuRepository.delete({ menu_id, drink_id });
   }
 
-  addDish(menu_id: number, { dish: dish_id }: AddDishInMenuDto) {
+  addDish(menu_id: string, { dish: dish_id }: AddDishInMenuDto) {
     const dish = this.dishInMenuRepository.create({ menu_id, dish_id });
     return this.dishInMenuRepository.save(dish);
   }
-  rmDish(menu_id: number, dish_id: number) {
+  rmDish(menu_id: string, dish_id: string) {
     return this.dishInMenuRepository.delete({ menu_id, dish_id });
   }
 
-  async updateImages(file: Express.Multer.File, id: number) {
+  async updateImages(file: Express.Multer.File, id: string) {
     const menuItem = await this.findOne(id);
     if (!menuItem) throw new BadRequestException('wrong item id');
 
@@ -167,7 +167,7 @@ export class MenuService {
     return;
   }
 
-  async switchOnBoard(id: number) {
+  async switchOnBoard(id: string) {
     const currentStatus = await this.menuRepository.findOne({
       select: { onboard: true },
       where: { id },
@@ -176,7 +176,7 @@ export class MenuService {
     return this.menuRepository.update(id, { onboard: !currentStatus.onboard });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const menuItem = await this.findOne(id);
     if (menuItem?.image_medium) {
       const arr = menuItem.image_medium.split('/');
@@ -190,13 +190,13 @@ export class MenuService {
   }
 
   async findByIds<K extends keyof Menu>(
-    ids: number[],
+    ids: string[],
     selectList: K[] = [] as K[],
-  ): Promise<(Pick<Menu, K> & { id: number })[]> {
-    const select = ['id', ...selectList].reduce((acc, key) => {
-      (acc as { [key]: boolean })[key] = true;
-      return acc;
-    }, {} as FindOptionsSelect<Menu>);
+  ): Promise<(Pick<Menu, K> & { id: string })[]> {
+    const select = {
+      id: true,
+      ...Object.fromEntries(selectList.map((key) => [key, true])),
+    } as FindOptionsSelect<Menu>;
     return this.menuRepository.find({
       where: { id: In(ids) },
       select,

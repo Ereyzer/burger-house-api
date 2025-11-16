@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsNumber,
   IsOptional,
+  IsUUID,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -12,9 +13,8 @@ import { UniqueIds } from '../../decorators/uniqueIds.decorator';
 
 class Item {
   @ApiProperty()
-  @IsNumber()
-  @Min(1)
-  id: number;
+  @IsUUID('4')
+  id: string;
   @ApiProperty()
   @Min(1)
   quantity: number;

@@ -13,8 +13,8 @@ import { OrderStatus, PaymentMethod } from '../types/enums';
 @Entity('orders')
 export class Order {
   // id SERIAL PRIMARY KEY,
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   // created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
   @CreateDateColumn({
     name: 'created_at',

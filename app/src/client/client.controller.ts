@@ -23,7 +23,7 @@ export class ClientController {
   // open all info about meal
   @Get('menu/:id')
   findOne(@Param('id') id: string) {
-    return this.clientService.findOne(+id);
+    return this.clientService.findOne(id);
   }
 
   @Get('about')

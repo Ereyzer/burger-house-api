@@ -34,7 +34,7 @@ export class DrinkController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.drinkService.findOne(+id);
+    return this.drinkService.findOne(id);
   }
 
   @RequirePermission(PermissionsEnum.DRINK_UPDATE)

@@ -145,7 +145,7 @@ export class OrdersService {
     return items;
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: {
@@ -161,7 +161,7 @@ export class OrdersService {
     return order;
   }
 
-  async updateStatus(id: number, status: OrderStatus) {
+  async updateStatus(id: string, status: OrderStatus) {
     const { affected } = await this.orderRepository.update({ id }, { status });
     if (!affected)
       throw new InternalServerErrorException('status did not updated');

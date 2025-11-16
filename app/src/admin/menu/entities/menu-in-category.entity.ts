@@ -17,6 +17,6 @@ import { Entity, PrimaryColumn } from 'typeorm';
 export class MenuInCategory {
   @PrimaryColumn({ type: 'varchar', length: 20 })
   category_id: string;
-  @PrimaryColumn({ type: 'integer' })
-  menu_id: number;
+  @PrimaryColumn('uuid')
+  menu_id: string;
 }

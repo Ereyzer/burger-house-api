@@ -6,8 +6,8 @@ import { Order } from './order.entity';
 export class CustomerOrderPhoneEntity {
   @PrimaryColumn({ type: 'char', length: 60, name: 'hash_phone' })
   hashPhone: string;
-  @PrimaryColumn('integer', { name: 'order_id' })
-  orderId: number;
+  @PrimaryColumn('uuid', { name: 'order_id' })
+  orderId: string;
   @ManyToOne(() => Order, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

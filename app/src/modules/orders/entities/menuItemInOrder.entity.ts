@@ -13,10 +13,10 @@ import { Menu } from '../../../admin/menu/entities/menu.entity';
 @Entity('menu_item_in_order')
 @Index('idx_menuItem_in_order_time', ['createdAt'])
 export class MenuItemInOrder {
-  @PrimaryColumn('integer')
-  order_id: number;
-  @PrimaryColumn('integer')
-  menu_id: number;
+  @PrimaryColumn('uuid')
+  order_id: string;
+  @PrimaryColumn('uuid')
+  menu_id: string;
   @Column({ type: 'integer', nullable: false, default: 1 })
   quantity: number;
   @CreateDateColumn({

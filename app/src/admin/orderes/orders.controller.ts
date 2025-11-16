@@ -31,6 +31,7 @@ export class OrdersController {
     return this.ordersService.findAll(page, perPage);
   }
 
+  @RequirePermission(PermissionsEnum.ORDER_READ)
   @Get('/actual')
   findActual() {
     return this.ordersService.findActual();
@@ -38,14 +39,14 @@ export class OrdersController {
 
   @RequirePermission(PermissionsEnum.ORDER_READ)
   @Get('/:id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.ordersService.findOne(id);
   }
 
   @RequirePermission(PermissionsEnum.ORDER_UPDATE_STAUS)
   @Patch('status/:id')
   updateStatus(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() { status }: UpdateOrderStatusDto,
   ) {
     return this.ordersService.updateStatus(id, status);

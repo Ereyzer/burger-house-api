@@ -12,8 +12,8 @@ import { Menu } from '../../menu/entities/menu.entity';
 //   name VARCHAR(255) NOT NULL
 @Entity('dishes')
 export class Dish {
-  @PrimaryGeneratedColumn('increment', { type: 'integer' })
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @Column({ type: 'decimal', precision: 5, scale: 2, nullable: false })
   price: number;
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })

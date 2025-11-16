@@ -17,9 +17,9 @@ import { Entity, PrimaryColumn } from 'typeorm';
 // );
 @Entity('drinks_in_menu')
 export class DrinkInMenu {
-  @PrimaryColumn({ type: 'integer' })
-  drink_id: number;
+  @PrimaryColumn('uuid')
+  drink_id: string;
 
-  @PrimaryColumn({ type: 'integer' })
-  menu_id: number;
+  @PrimaryColumn('uuid')
+  menu_id: string;
 }

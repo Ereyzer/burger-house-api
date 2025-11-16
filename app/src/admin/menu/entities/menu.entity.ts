@@ -23,8 +23,8 @@ import { Dish } from '../../dish/entities/dish.entity';
 @Entity('menu')
 @Index('menu_title_subtitle_name', ['title', 'subtitle'])
 export class Menu {
-  @PrimaryGeneratedColumn('increment', { type: 'integer' })
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @Column({ type: 'varchar', length: 255, nullable: false })
   title: string;
   @Column({ type: 'varchar', length: 255, nullable: false, default: '' })
