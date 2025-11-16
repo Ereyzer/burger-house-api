@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
 } from 'class-validator';
@@ -38,16 +39,22 @@ export class CreateMenuDto {
   @GeneralNumber()
   @IsOptional()
   calories?: number;
-  @ApiProperty()
+  @ApiProperty({
+    type: [String],
+  })
   @IsArray()
   @IsString({ each: true })
   categories: string[];
-  @ApiProperty()
+  @ApiProperty({
+    type: [String],
+  })
   @IsArray()
-  @IsNumber({}, { each: true })
-  drinks: number[];
-  @ApiProperty()
+  @IsUUID('4', { each: true })
+  drinks: string[];
+  @ApiProperty({
+    type: [String],
+  })
   @IsArray()
-  @IsNumber({}, { each: true })
-  dishes: number[];
+  @IsUUID('4', { each: true })
+  dishes: string[];
 }

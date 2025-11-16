@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS opening_hours (
 --TODO:
 
 CREATE TABLE IF NOT EXISTS drinks(
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL UNIQUE,
   price DECIMAL(5, 2) NOT NULL,
   calories SMALLINT NOT NULL,
@@ -128,7 +128,7 @@ COMMENT ON COLUMN drinks.calories IS 'approximate number of calories in one drin
 COMMENT ON COLUMN drinks.price IS 'Max price is 999.99';
 
 CREATE TABLE IF NOT EXISTS dishes (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   price DECIMAL(5, 2) NOT NULL,
   name VARCHAR(255) NOT NULL UNIQUE
 );
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS dishes (
 COMMENT ON TABLE dishes IS 'there is dishes we can chse for menu';
 
   CREATE TABLE IF NOT EXISTS menu (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(255) NOT NULL ,
     subtitle VARCHAR(255) NOT NULL DEFAULT '',
     price DECIMAL(6,2) NOT NULL,
@@ -162,8 +162,8 @@ COMMENT ON COLUMN menu.rating IS 'rating is with stars from 1.00 to 5.00';
 COMMENT ON COLUMN menu.calories IS 'count of calories, that is for future feature';
 
 CREATE TABLE IF NOT EXISTS drinks_in_menu (
-  drink_id INTEGER NOT NULL,
-  menu_id INTEGER NOT NULL,
+  drink_id UUID NOT NULL,
+  menu_id UUID NOT NULL,
   PRIMARY KEY (drink_id, menu_id),
   
   CONSTRAINT fk_drink
@@ -180,8 +180,8 @@ CREATE TABLE IF NOT EXISTS drinks_in_menu (
 COMMENT ON TABLE drinks_in_menu IS 'table for references which drink in which menu position';
 
 CREATE TABLE IF NOT EXISTS dishes_in_menu (
-  dish_id INTEGER NOT NULL,
-  menu_id INTEGER NOT NULL,
+  dish_id UUID NOT NULL,
+  menu_id UUID NOT NULL,
   PRIMARY KEY (dish_id, menu_id),
   
   CONSTRAINT fk_dish
@@ -209,7 +209,7 @@ COMMENT on COLUMN categories.Id IS 'id is string like "drink", "vegeterian" or "
 
 CREATE TABLE IF NOT EXISTS menu_in_category (
   category_id VARCHAR(20) NOT NULL,
-  menu_id INTEGER NOT NULL,
+  menu_id UUID NOT NULL,
   PRIMARY KEY (category_id, menu_id),
 
   CONSTRAINT fk_category
@@ -229,7 +229,6 @@ COMMENT ON TABLE menu_in_category IS 'this table explain wich dish in which cate
 -- TODO: sessions
 
 CREATE TABLE IF NOT EXISTS sessions (
---   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   personnel_id UUID NOT NULL REFERENCES personnel (id) ON DELETE CASCADE ON UPDATE CASCADE,
   sas CHAR(32) NOT NULL,
@@ -263,7 +262,7 @@ CREATE TYPE IF NOT EXISTS order_status AS ENUM (
 
 
 CREATE TABLE IF NOT EXISTS orders (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     payment payment_method NOT NULL,
@@ -286,7 +285,7 @@ ON orders (status, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS customer_order_phone_hashes (
 hash_phone CHAR(31) NOT NULL,
-order_id INTEGER NOT NULL,
+order_id UUID NOT NULL,
 PRIMARY KEY (hash_phone, order_id),
 
     CONSTRAINT fk_order
@@ -301,8 +300,8 @@ CREATE INDEX IF NOT EXISTS idx_customer_order_hash_phone ON customer_order_phone
 -- TODO: dish in order
 
 CREATE TABLE IF NOT EXISTS menu_item_in_order (
-    order_id INTEGER NOT NULL, 
-    menu_id INTEGER NOT NULL,
+    order_id UUID NOT NULL, 
+    menu_id UUID NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     PRIMARY KEY (order_id, menu_id),
@@ -322,7 +321,7 @@ CREATE INDEX IF NOT EXISTS idx_menuItem_in_order_time ON menu_item_in_order (cre
 
 
 CREATE TABLE IF NOT EXISTS delivery_prices (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   distance SMALLINT NOT NULL,
   min_order SMALLINT NOT NULL,
   delivery_price DECIMAL(5,2) NOT NULL DEFAULT 0.00,

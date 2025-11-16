@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { CreateMenuDto } from './create-menu.dto';
 import { GeneralPropertyDecoratorMaker } from '../../../utils/propertyDecoratorApplier';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateMenuDto extends PartialType(
   OmitType(CreateMenuDto, ['categories', 'drinks', 'dishes'] as const),
@@ -22,12 +22,12 @@ export class UpdateMenuImagesDto {
 
 export class AddDrinkInMenuDto {
   @ApiProperty()
-  @IsNumber()
-  drink: number;
+  @IsUUID('4')
+  drink: string;
 }
 
 export class AddDishInMenuDto {
   @ApiProperty()
-  @IsNumber()
-  dish: number;
+  @IsUUID('4')
+  dish: string;
 }

@@ -2,8 +2,8 @@ import { Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('dishes_in_menu')
 export class DishInMenu {
-  @PrimaryColumn('integer')
-  menu_id: number;
-  @PrimaryColumn('integer')
-  dish_id: number;
+  @PrimaryColumn('uuid')
+  menu_id: string;
+  @PrimaryColumn('uuid')
+  dish_id: string;
 }

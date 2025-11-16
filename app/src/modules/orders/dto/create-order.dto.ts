@@ -10,6 +10,7 @@ import {
   IsNumberString,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
   Max,
   MaxLength,
@@ -19,10 +20,11 @@ import {
 import { Type } from 'class-transformer';
 
 class Selection {
-  @ApiProperty()
-  @IsNumber()
-  @Min(1)
-  id: number;
+  @ApiProperty({
+    type: String,
+  })
+  @IsUUID('4')
+  id: string;
   @ApiProperty()
   @IsNumber()
   @Min(1)

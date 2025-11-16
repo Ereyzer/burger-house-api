@@ -64,7 +64,7 @@ export class ClientService {
     return { items, ...paginatioData };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const item = await this.clientMenu.findOne({
       where: { id },
       relations: { categories: true, dishes: true, drinks: true },
@@ -106,14 +106,14 @@ export class ClientService {
     isDelivery: CountPriceDto['isDelivery'],
     distance?: CountPriceDto['distance'],
   ) {
-    const ids: number[] = [];
+    const ids: string[] = [];
     const quantityObj = items.reduce(
       (acc, item) => {
         acc[item.id] = item.quantity;
         ids.push(item.id);
         return acc;
       },
-      {} as { [key: number]: number },
+      {} as { [key: string]: number },
     );
     const [menuItems, deliveryPrices] = await Promise.all([
       this.menuService.findByIds(ids, ['price']),

@@ -32,26 +32,26 @@ export class DishService {
   }
 
   // TODO: with relations
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} dish`;
   }
 
-  findMany(ids: number[]): Promise<Dish[]> {
+  findMany(ids: string[]): Promise<Dish[]> {
     return this.dishRepository.find({ where: { id: In(ids) } });
   }
 
   // TODO: relations
-  update(id: number, updateDishDto: UpdateDishDto) {
+  update(id: string, updateDishDto: UpdateDishDto) {
     console.log(updateDishDto);
 
     return `This action updates a #${id} dish`;
   }
 
-  updatePrice(id: number, { price }: UpdateDishPriceDto) {
+  updatePrice(id: string, { price }: UpdateDishPriceDto) {
     return this.dishRepository.update(id, { price });
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.dishRepository.delete(id);
   }
 }
