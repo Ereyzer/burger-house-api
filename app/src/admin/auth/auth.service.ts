@@ -197,16 +197,16 @@ export class AuthService {
           .catch(() => {});
         throw new InternalServerErrorException();
       });
-    const a = await this.mailerSend
-      .sendVerificationEmailResend(email, token)
-      .catch(() => {
-        this.personnelService
-          .remove(user.id)
-          .then(() => {})
-          .catch(() => {});
-        throw new InternalServerErrorException();
-      });
-    console.log(a);
+    // const a = await this.mailerSend
+    //   .sendVereficationEmailMailerSend(email, token)
+    //   .catch(() => {
+    //     this.personnelService
+    //       .remove(user.id)
+    //       .then(() => {})
+    //       .catch(() => {});
+    //     throw new InternalServerErrorException();
+    //   });
+    // console.log(a);
 
     try {
       await this.personnelService.updateRole(user.id, {
