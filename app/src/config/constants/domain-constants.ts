@@ -17,7 +17,7 @@ export const domains = () => {
       domains.CLIENT = ['http://localhost:3002', 'http://192.168.0.106:3002'];
       domains.API = 'http://localhost:3000';
       break;
-    case 'prod':
+    case 'production':
       domains.ADMIN = [getEnvVars(envVars.DOMAIN_ADMIN)];
       domains.CLIENT = ['http://localhost:3002'];
       domains.API = getEnvVars(envVars.DOMAIN_API);
