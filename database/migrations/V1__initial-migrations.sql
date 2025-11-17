@@ -279,7 +279,8 @@ CREATE TABLE IF NOT EXISTS orders (
     enc_email VARCHAR(255) DEFAULT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_orders_create_at ON orders (created_at) USING HASH;
+CREATE INDEX IF NOT EXISTS idx_orders_create_at ON orders (created_at)
+USING HASH WITH BUCKET_COUNT = 8;
 
 CREATE INDEX IF NOT EXISTS idx_orders_status_created_at
 ON orders (status, created_at DESC);
@@ -318,7 +319,8 @@ CREATE TABLE IF NOT EXISTS menu_item_in_order (
     ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_menuItem_in_order_time ON menu_item_in_order (created_at) USING HASH;
+CREATE INDEX IF NOT EXISTS idx_menuItem_in_order_time ON menu_item_in_order (created_at)
+USING HASH WITH BUCKET_COUNT = 8;
 
 
 CREATE TABLE IF NOT EXISTS delivery_prices (
