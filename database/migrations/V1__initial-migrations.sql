@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS about (
   phone CHAR(9), --phone suport only ukrainian numbers +380 66 73 45 027 +380 3477 25053 
                   -- in format 667345027 (+380) is defoult and we add in in api
   place_address VARCHAR(255), 
+  place_address_link VARCHAR(255),
   place_description TEXT -- description about our delyvery why we the best
 );
 -- Коментарі для таблиці about

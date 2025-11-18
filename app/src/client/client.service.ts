@@ -81,14 +81,19 @@ export class ClientService {
   }
 
   async newOrder(createOrderDto: CreateOrderDto) {
+    console.log(createOrderDto);
+
     const { total, delivery } = await this.totalPrice(
       [...createOrderDto.selections],
       createOrderDto.delivery,
       createOrderDto.distance,
     );
+    console.log(total);
+
     createOrderDto.amount = total;
     createOrderDto.deliveryPrice = delivery;
     const order = await this.orderService.create(createOrderDto);
+    console.log(order);
 
     // order.amount = total;
     // order.deliveryPrice = delivery;
