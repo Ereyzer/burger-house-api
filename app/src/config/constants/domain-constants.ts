@@ -13,8 +13,16 @@ export const domains = () => {
   };
   switch (envVarValue[envVars.NODE_ENV]) {
     case 'development':
-      domains.ADMIN = ['http://localhost:3001', 'http://192.168.0.106:3001'];
-      domains.CLIENT = ['http://localhost:3002', 'http://192.168.0.106:3002'];
+      domains.ADMIN = [
+        'http://localhost:3001',
+        'http://192.168.0.106:3001',
+        // getEnvVars(envVars.DOMAIN_ADMIN),
+      ];
+      domains.CLIENT = [
+        'http://localhost:3002',
+        'http://192.168.0.106:3002',
+        // getEnvVars(envVars.DOMAIN_CLIENT),
+      ];
       domains.API = 'http://localhost:3000';
       break;
     case 'production':

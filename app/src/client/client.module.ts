@@ -7,6 +7,7 @@ import { OrdersBaseModule } from '../modules/orders/ordersBase.module';
 import { MenuModule } from '../admin/menu/menu.module';
 import { AboutModule } from '../admin/about/about.module';
 import { GoogleMapsModule } from '../modules/google-maps/google-maps.module';
+import { TelegrabBotService } from '../services/TelegramBot.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ClientMenu]),
@@ -16,6 +17,6 @@ import { GoogleMapsModule } from '../modules/google-maps/google-maps.module';
     GoogleMapsModule,
   ],
   controllers: [ClientController],
-  providers: [ClientService],
+  providers: [ClientService, TelegrabBotService],
 })
 export class ClientModule {}

@@ -67,13 +67,24 @@ export class ClientController {
   }
 
   @Post('newOrder/totalPrice')
-  totalPrice(@Body() { items, isDelivery, distance }: CountPriceDto) {
-    return this.clientService.totalPrice(items, isDelivery, distance);
+  totalPrice(
+    @Body()
+    { items, isDelivery, distance, secretToken, address }: CountPriceDto,
+  ) {
+    return this.clientService.totalPrice({
+      items,
+      isDelivery,
+      distance,
+      secretToken,
+      address,
+    });
   }
 
   @Get('street/autocomplete')
-  autocomplete(@Query('q') query: string) {
-    return this.googleMapsService.autocomplete(query);
+  autocomplete(@Query() query: { q: string; st: string }) {
+    console.log(query);
+
+    return this.googleMapsService.autocomplete(query.q, query.st);
   }
 
   @ApiOkResponse({
@@ -81,10 +92,20 @@ export class ClientController {
   })
   @Post('distance')
   distance(
-    @Body() { street, houseNumber }: { street: string; houseNumber: string },
+    @Body()
+    {
+      street,
+      houseNumber,
+      secretToken,
+    }: {
+      street: string;
+      houseNumber: string;
+      secretToken: string;
+    },
   ) {
     return this.googleMapsService.getDistanceMatrix(
       `${street.split(' ').join('%20')}%20${houseNumber}`,
+      secretToken,
     );
   }
 }

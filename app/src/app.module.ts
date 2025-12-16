@@ -29,6 +29,8 @@ import { CustomerOrderPhoneEntity } from './modules/orders/entities/customerOrde
 import { ModulesModule } from './modules/modules.module';
 import { OpeningHour } from './admin/about/entities/openingTime.entity';
 import { DeliveryPrices } from './admin/about/entities/deliveryPrices.entity';
+import { BrakeTimesByDate } from './admin/about/entities/brakeTimesByDate.entity';
+import { TelegrabBotService } from './services/TelegramBot.service';
 
 @Module({
   imports: [
@@ -86,6 +88,7 @@ import { DeliveryPrices } from './admin/about/entities/deliveryPrices.entity';
         CustomerOrderPhoneEntity,
         OpeningHour,
         DeliveryPrices,
+        BrakeTimesByDate,
       ],
       synchronize: false,
       retryAttempts: 10,
@@ -97,6 +100,6 @@ import { DeliveryPrices } from './admin/about/entities/deliveryPrices.entity';
     ModulesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, TelegrabBotService],
 })
 export class AppModule {}

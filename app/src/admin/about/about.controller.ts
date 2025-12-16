@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Put, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { AboutService } from './about.service';
 import { UpdateAboutDto } from './dto/update-about.dto';
 import { AuthWithBearerToken } from '../../decorators/authWithBearerToken.decorator';
@@ -8,6 +17,8 @@ import {
   DayOfWeekDto,
   UpdateOpeningHoursDto,
 } from './dto/updateOpeningHours.dto';
+import { CreateBrakeTimeDto } from './dto/create-brakeTime.dto';
+import { CreateDeliveryPriceDto } from './dto/create-delivery-price.dto';
 
 @AuthWithBearerToken()
 @Controller('about')
@@ -22,8 +33,15 @@ export class AboutController {
 
   @RequirePermission(PermissionsEnum.ABOUT_GET)
   @Get()
-  getAbout() {
-    return this.aboutService.findOne();
+  async getAbout() {
+    const [aboutData, openningHours, brakeTimes, deliveryPrices] =
+      await Promise.all([
+        this.aboutService.findOne(),
+        this.aboutService.getOpeningHours(),
+        this.aboutService.getBrakeTimes(),
+        this.aboutService.getDeliveryPrices(),
+      ]);
+    return { ...aboutData, openningHours, brakeTimes, deliveryPrices };
   }
 
   @RequirePermission(PermissionsEnum.OPENING_READ)
@@ -41,5 +59,42 @@ export class AboutController {
   @Put('opening')
   usertOpeningTime(@Body() day: UpdateOpeningHoursDto) {
     return this.aboutService.upsertOpeningHours(day);
+  }
+
+  @RequirePermission(PermissionsEnum.OPENING_UPDATE)
+  @Post('braketime')
+  addBrakeTime(@Body() dto: CreateBrakeTimeDto) {
+    return this.aboutService.addBrakeTime(dto);
+  }
+
+  @RequirePermission(PermissionsEnum.OPENING_READ)
+  @Get('braketime')
+  getBrakeTimes(@Query('date') workDate?: string) {
+    return this.aboutService.getBrakeTimes(workDate);
+  }
+
+  @RequirePermission(PermissionsEnum.OPENING_UPDATE)
+  @Delete('braketime/:id')
+  rmBrakeTimeById(@Param('id') id: string) {
+    return this.aboutService.rmBrakeTimeBy({ id });
+  }
+  @RequirePermission(PermissionsEnum.OPENING_UPDATE)
+  @Delete('braketime')
+  rmBrakeTime() {
+    return this.aboutService.rmBrakeTimeBy();
+  }
+
+  // TODO:change permision
+  @RequirePermission(PermissionsEnum.ABOUT_UPDATE)
+  @Post('deliveryprice')
+  addDeliveryPrice(@Body() newPrice: CreateDeliveryPriceDto) {
+    return this.aboutService.addDeliveryPrice(newPrice);
+  }
+
+  // TODO: change permision
+  @RequirePermission(PermissionsEnum.ABOUT_UPDATE)
+  @Delete('deliveryprice/:id')
+  rmDeliveryPrice(@Param('id') id: string) {
+    return this.aboutService.rmDeliveryPrice(id);
   }
 }

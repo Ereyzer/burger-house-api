@@ -5,8 +5,10 @@ import {
   IsBoolean,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
   Min,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { UniqueIds } from '../../decorators/uniqueIds.decorator';
@@ -26,11 +28,26 @@ export class CountPriceDto {
   @Type(() => Item)
   @UniqueIds()
   items: Item[];
+
   @ApiProperty()
   @IsBoolean()
   isDelivery: boolean;
+
+  @ValidateIf((o: CountPriceDto) => o.isDelivery === true)
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
   distance?: number;
+
+  @ValidateIf((o: CountPriceDto) => o.isDelivery === true)
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @ValidateIf((o: CountPriceDto) => o.isDelivery === true)
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  secretToken?: string;
 }

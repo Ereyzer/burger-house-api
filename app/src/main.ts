@@ -43,21 +43,39 @@ async function bootstrap(): Promise<void> {
       .build();
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, documentFactory);
-    setInterval(() => {
-      const used = process.memoryUsage();
-      console.log(
-        `Memory: RSS=${(used.rss / 1024 / 1024).toFixed(2)} MB, HeapUsed=${(
-          used.heapUsed /
-          1024 /
-          1024
-        ).toFixed(2)} MB`,
-      );
-    }, 10000);
 
-    await app.listen(envVarValue[envVars.APP_PORT], () => {
+    // setInterval(() => {
+    //   const used = process.memoryUsage();
+    //   console.log(
+    //     `Memory: RSS=${(used.rss / 1024 / 1024).toFixed(2)} MB, HeapUsed=${(
+    //       used.heapUsed /
+    //       1024 /
+    //       1024
+    //     ).toFixed(2)} MB`,
+    //   );
+    // }, 10000);
+    // process.on('uncaughtException', (error) => {
+    //   console.error('❌ Uncaught Exception:', error);
+    // });
+
+    // process.on('unhandledRejection', (reason) => {
+    //   console.error('❌ Unhandled Rejection:', reason);
+    // });
+
+    // Detect Render kill
+    // process.on('SIGTERM', () => {
+    //   console.warn('⚠️ SIGTERM received — server is about to shut down');
+    //   return;
+    // });
+
+    // process.on('SIGINT', () => {
+    //   console.warn('⚠️ SIGINT received — manual shutdown or container stop');
+    //   return;
+    // });
+
+    await app.listen(process.env.PORT || envVarValue[envVars.APP_PORT], () => {
       console.log(`server run on port: ${envVarValue[envVars.APP_PORT]}`);
     });
-    return;
   } catch (error) {
     console.log(error);
   }

@@ -31,6 +31,9 @@ export enum PermissionsEnum {
   ORDER_CANCLE = 'order:cancle',
   OPENING_READ = 'opening:read',
   OPENING_UPDATE = 'opening:update',
+  DELIVERYPRICE_READ = 'delivery-price:read',
+  DELIVERYPRICE_DELETE = 'delivery-price:delete',
+  DELIVERYPRICE_ADD = 'delivery-price:add',
   // TODO:  next permits need to add to DB
   // ROLE_ADD = 'role:add',
   // ROLE_UPDATE = 'role:update',

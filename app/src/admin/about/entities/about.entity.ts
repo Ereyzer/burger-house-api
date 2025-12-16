@@ -21,4 +21,11 @@ export class About {
     nullable: true,
   })
   placeAddress: string | null;
+  @Column({
+    name: 'place_address_link',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
+  placeAddressLink: string | null;
 }

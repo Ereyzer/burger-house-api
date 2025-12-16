@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { TelegrabBotService } from './services/TelegramBot.service';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    const messge = 'Hello World!';
+  constructor(private readonly telegramBotService: TelegrabBotService) {}
 
-    return messge;
+  async getHello(): Promise<string> {
+    const message = 'Hello World!';
+    console.log(await this.telegramBotService.sendMessage(message));
+    return message;
   }
 }

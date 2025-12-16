@@ -15,7 +15,7 @@ export class GoogleMapsService {
     lng: 23.967393,
   };
 
-  async autocomplete(input: string) {
+  async autocomplete(input: string, sessionToken: string) {
     const url = `${this.baseUrl}/place/autocomplete/json`;
     const cityLocation = { lat: 48.9734, lng: 24.0094 }; // координати центру м. Долина
     const radius = 5000;
@@ -30,22 +30,25 @@ export class GoogleMapsService {
           radius,
           strictbounds: true,
           types: 'route',
+          sessionToken,
         },
       })) as unknown as {
         data: {
           predictions: { structured_formatting: { main_text: string } }[];
         };
       };
-
-      return data.predictions.map((p) => ({
-        street: p.structured_formatting.main_text,
-      }));
+      return {
+        data: data.predictions.map((p) => ({
+          street: p.structured_formatting.main_text,
+        })),
+        sessionToken,
+      };
     } catch {
       throw new BadRequestException('Помилка запиту до Google API');
     }
   }
 
-  async geocodeAddress(address: string) {
+  async geocodeAddress(address: string, sessionToken: string) {
     const url = 'https://maps.googleapis.com/maps/api/geocode/json';
 
     try {
@@ -54,6 +57,7 @@ export class GoogleMapsService {
           address: `${address}, Долина, Івано-Франківська область, Україна, 77500`,
           language: 'uk',
           key: this.apiKey,
+          sessionToken,
         },
       })) as unknown as {
         data: {
@@ -80,7 +84,10 @@ export class GoogleMapsService {
     }
   }
 
-  async getDistanceMatrix(address: string) {
+  async getDistanceMatrix(
+    address: string,
+    sessionToken: string,
+  ): Promise<{ distanceMeters: number }> {
     const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
     const origin = {
       location: {
@@ -92,7 +99,7 @@ export class GoogleMapsService {
     };
 
     try {
-      const { location } = await this.geocodeAddress(address);
+      const { location } = await this.geocodeAddress(address, sessionToken);
       const destination = {
         location: {
           latLng: {
@@ -107,7 +114,7 @@ export class GoogleMapsService {
           origin,
           destination,
           travelMode: 'DRIVE',
-          routingPreference: 'TRAFFIC_AWARE',
+          // routingPreference: 'TRAFFIC_AWARE',
           units: 'METRIC',
           languageCode: 'uk',
         },
@@ -118,7 +125,7 @@ export class GoogleMapsService {
             'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters',
           },
         },
-      )) as unknown as { data: { routes: object[] } };
+      )) as unknown as { data: { routes: { distanceMeters: number }[] } };
       if (!data.routes || data.routes.length === 0) {
         throw new NotFoundException(
           'Маршрут не знайдено. Перевірте координати призначення.',

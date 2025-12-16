@@ -1,8 +1,8 @@
-import { AfterLoad, Column, Entity, PrimaryColumn } from 'typeorm';
+import { AfterLoad, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('delivery_prices')
 export class DeliveryPrices {
-  @PrimaryColumn({ type: 'varchar', length: 10 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({
     name: 'delivery_price',

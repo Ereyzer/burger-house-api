@@ -60,7 +60,9 @@ export class OrdersService {
       item.selections = sel;
       await queryRanner.commitTransaction();
       return item;
-    } catch {
+    } catch (e) {
+      console.log(e);
+
       await queryRanner.rollbackTransaction();
       // TODO: informative exeptionthrow
       throw new InternalServerErrorException(
