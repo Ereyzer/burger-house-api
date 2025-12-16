@@ -111,7 +111,6 @@ export class ClientService {
     createOrderDto.deliveryPrice = delivery;
     const [order] = await Promise.all([
       this.orderService.create(createOrderDto),
-
       this.telegramBotService.sendMessage(
         JSON.stringify({
           status: 'очікує',
@@ -162,7 +161,7 @@ export class ClientService {
       this.menuService.findByIds(ids, ['price']),
       ...(!isDelivery ? [] : [this.aboutService.getDeliveryPrices()]),
     ]);
-    console.log(deliveryPrices);
+    // console.log(deliveryPrices);
 
     const subTotal = totalPriceCalculator(menuItems, quantityObj);
     const discont = 0;

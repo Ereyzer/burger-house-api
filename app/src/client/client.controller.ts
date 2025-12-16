@@ -82,7 +82,7 @@ export class ClientController {
 
   @Get('street/autocomplete')
   autocomplete(@Query() query: { q: string; st: string }) {
-    console.log(query);
+    // console.log(query);
 
     return this.googleMapsService.autocomplete(query.q, query.st);
   }
