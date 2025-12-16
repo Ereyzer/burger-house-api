@@ -17,7 +17,8 @@
     "app:install": "npm run app:run -- npm install",
     "app:install-package": "npm run app:run -- npm install $@",
     "prepare": "husky",
-    "firststart": "npm ci; npm run up:build"
+    "firststart": "npm ci; npm run up:build",
+    "cocrach:cli": "docker exec -it cockroachdb cockroach sql --insecure"
   },
   "devDependencies": {
     "husky": "^9.1.7"

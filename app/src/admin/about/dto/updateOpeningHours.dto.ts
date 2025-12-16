@@ -47,7 +47,7 @@ export class UpdateOpeningHoursDto {
   @IsOptional()
   @IsString()
   @Matches(timeRegExp, {
-    message: 'opensAt format HH:MM (00:00–23:59)',
+    message: 'closesAt format HH:MM (00:00–23:59)',
   })
   closesAt: string | null;
 }

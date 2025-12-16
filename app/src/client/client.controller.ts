@@ -67,8 +67,17 @@ export class ClientController {
   }
 
   @Post('newOrder/totalPrice')
-  totalPrice(@Body() { items, isDelivery, distance }: CountPriceDto) {
-    return this.clientService.totalPrice(items, isDelivery, distance);
+  totalPrice(
+    @Body()
+    { items, isDelivery, distance, secretToken, address }: CountPriceDto,
+  ) {
+    return this.clientService.totalPrice({
+      items,
+      isDelivery,
+      distance,
+      secretToken,
+      address,
+    });
   }
 
   @Get('street/autocomplete')

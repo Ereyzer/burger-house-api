@@ -84,7 +84,10 @@ export class GoogleMapsService {
     }
   }
 
-  async getDistanceMatrix(address: string, sessionToken: string) {
+  async getDistanceMatrix(
+    address: string,
+    sessionToken: string,
+  ): Promise<{ distanceMeters: number }> {
     const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
     const origin = {
       location: {
@@ -122,7 +125,7 @@ export class GoogleMapsService {
             'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters',
           },
         },
-      )) as unknown as { data: { routes: object[] } };
+      )) as unknown as { data: { routes: { distanceMeters: number }[] } };
       if (!data.routes || data.routes.length === 0) {
         throw new NotFoundException(
           'Маршрут не знайдено. Перевірте координати призначення.',

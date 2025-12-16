@@ -10,6 +10,8 @@ import { MenuService } from '../admin/menu/menu.service';
 import { totalPriceCalculator } from '../utils/totalPriceCalculator';
 import { AboutService } from '../admin/about/about.service';
 import { PriceMath } from '../utils/mathWithPrices';
+import { GoogleMapsService } from '../modules/google-maps/google-maps.service';
+import { TelegrabBotService } from '../services/TelegramBot.service';
 
 @Injectable()
 export class ClientService {
@@ -19,7 +21,9 @@ export class ClientService {
     private readonly menuService: MenuService,
     private readonly orderService: OrdersService,
     private readonly aboutService: AboutService,
+    private readonly gooleMapsService: GoogleMapsService,
     // private readonly ordersGateway: OrdersGateway,
+    private readonly telegramBotService: TelegrabBotService,
   ) {}
 
   async findAll(page: number, take: number, category?: string) {
@@ -74,30 +78,51 @@ export class ClientService {
   }
 
   async getAbout() {
-    return {
-      ...(await this.aboutService.findOne()),
-      openingHours: await this.aboutService.getOpeningHours(),
-    };
+    const dateNow = new Date();
+    const year = dateNow.getFullYear();
+    const month = String(dateNow.getMonth()).padStart(2, '0');
+    const day = String(dateNow.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    const [aboutData, openningHours, brakeTimes] = await Promise.all([
+      this.aboutService.findOne(),
+      this.aboutService.getOpeningHours(),
+      this.aboutService.getBrakeTimes(formattedDate),
+    ]);
+    return { ...aboutData, openningHours, brakeTimes };
   }
 
   async newOrder(createOrderDto: CreateOrderDto) {
-    console.log(createOrderDto);
-
     const { total, delivery } = await this.totalPrice(
-      [...createOrderDto.selections],
-      createOrderDto.delivery,
-      createOrderDto.distance,
+      !createOrderDto.delivery
+        ? {
+            items: [...createOrderDto.selections],
+            isDelivery: createOrderDto.delivery,
+          }
+        : {
+            items: [...createOrderDto.selections],
+            isDelivery: createOrderDto.delivery,
+            distance: createOrderDto.distance as number,
+            address: createOrderDto.address as string,
+          },
     );
-    console.log(total);
 
     createOrderDto.amount = total;
     createOrderDto.deliveryPrice = delivery;
-    const order = await this.orderService.create(createOrderDto);
-    console.log(order);
+    const [order] = await Promise.all([
+      this.orderService.create(createOrderDto),
 
-    // order.amount = total;
-    // order.deliveryPrice = delivery;
-    // this.ordersGateway.pushNewOrder(order).catch(() => {});
+      this.telegramBotService.sendMessage(
+        JSON.stringify({
+          status: 'очікує',
+          createdAt: Date.now(),
+          ...(createOrderDto.delivery
+            ? { адреса: createOrderDto.address }
+            : { адреса: 'в закладі' }),
+        }),
+      ),
+    ]);
+
     return {
       status: order.status,
       id: order.id,
@@ -106,11 +131,24 @@ export class ClientService {
     };
   }
 
-  async totalPrice(
-    items: CountPriceDto['items'],
-    isDelivery: CountPriceDto['isDelivery'],
-    distance?: CountPriceDto['distance'],
-  ) {
+  async totalPrice({
+    items,
+    isDelivery,
+    address,
+    distance,
+    secretToken,
+  }: CountPriceDto) {
+    if (isDelivery && secretToken && address) {
+      distance = (
+        await this.gooleMapsService
+          .getDistanceMatrix(address, secretToken)
+          .catch((err) => {
+            console.log(err);
+            return { distanceMeters: undefined };
+          })
+      ).distanceMeters;
+    }
+
     const ids: string[] = [];
     const quantityObj = items.reduce(
       (acc, item) => {
@@ -122,17 +160,22 @@ export class ClientService {
     );
     const [menuItems, deliveryPrices] = await Promise.all([
       this.menuService.findByIds(ids, ['price']),
-      this.aboutService.getDeliveryPrices(),
+      ...(!isDelivery ? [] : [this.aboutService.getDeliveryPrices()]),
     ]);
+    console.log(deliveryPrices);
 
     const subTotal = totalPriceCalculator(menuItems, quantityObj);
     const discont = 0;
-    const deliveryDistance = distance || deliveryPrices[0].distance;
+    const deliveryDistance = !isDelivery
+      ? 0
+      : distance || deliveryPrices[0].distance;
+
     const outOfDistance = !isDelivery
       ? false
       : !distance ||
         distance > deliveryPrices[deliveryPrices.length - 1].distance;
     let tmpDistance = 0;
+
     const delivery = !isDelivery
       ? 0
       : deliveryPrices.find((option) => {
@@ -151,9 +194,9 @@ export class ClientService {
           return false;
         })?.deliveryPrice || 0;
 
-    const priceWithDelivery = PriceMath.add(subTotal, delivery);
-    const total = PriceMath.minus(priceWithDelivery, discont);
+    const priceWithDeivery = PriceMath.add(subTotal, delivery);
+    const total = PriceMath.minus(priceWithDeivery, discont);
 
-    return { total, discont, delivery, subTotal, outOfDistance };
+    return { total, discont, delivery, subTotal, outOfDistance, distance };
   }
 }

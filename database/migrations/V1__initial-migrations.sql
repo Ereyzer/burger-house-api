@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS personnel (
   role_id VARCHAR(20) REFERENCES roles (id)
 );
 
-CREATE UNIQUE INDEX one_owner_per_role  
+CREATE UNIQUE INDEX IF NOT EXISTS one_owner_per_role  
 ON personnel (role_id)
 WHERE role_id = 'owner';
 
@@ -114,6 +114,14 @@ CREATE TABLE IF NOT EXISTS opening_hours (
   closes_at TIME WITHOUT TIME ZONE
 );
 
+CREATE TABLE IF NOT EXISTS brake_times_by_date (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  work_date DATE NOT NULL,
+  closes_at TIME WITHOUT TIME ZONE NOT NULL,
+  opens_at TIME WITHOUT TIME ZONE NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_brake_times_by_date_date ON brake_times_by_date (work_date); 
 --TODO:
 
 CREATE TABLE IF NOT EXISTS drinks(
@@ -297,7 +305,7 @@ PRIMARY KEY (hash_phone, order_id),
     ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_customer_order_hash_phone ON customer_order_phone_hashes (hash_phone);
+
 
 
 -- TODO: dish in order
@@ -394,7 +402,10 @@ VALUES
 ('order:update-status', 'оновлювати статус замовлення', NULL),
 ('order:cancle', 'Відмінити замовлення', NULL),
 ('opening:read', 'Перевірити час відкриття', NULL),
-('opening:update', 'оновлювати час відкриття', NULL)
+('opening:update', 'оновлювати час відкриття', NULL),
+('delivery-price:read', 'отримати ціни на доставку', NULL),
+('delivery-price:delete', 'видалити зону доставки', NULL),
+('delivery-price:add', 'додати зону доставки', NULL)
 ON CONFLICT (id) DO NOTHING; 
 
 
