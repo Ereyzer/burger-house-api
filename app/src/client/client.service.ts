@@ -161,7 +161,6 @@ export class ClientService {
       this.menuService.findByIds(ids, ['price']),
       ...(!isDelivery ? [] : [this.aboutService.getDeliveryPrices()]),
     ]);
-    // console.log(deliveryPrices);
 
     const subTotal = totalPriceCalculator(menuItems, quantityObj);
     const discont = 0;

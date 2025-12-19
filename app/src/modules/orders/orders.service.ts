@@ -29,7 +29,6 @@ export class OrdersService {
     const queryRanner = this.dataSource.createQueryRunner();
     await queryRanner.connect();
     await queryRanner.startTransaction();
-    console.log(envVarValue.PHONE_SALT);
 
     try {
       const [item, hashPhoneAll] = await Promise.all([
