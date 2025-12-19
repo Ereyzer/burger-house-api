@@ -3,7 +3,7 @@ import { envVars, envVarValue } from './env-constants';
 
 export const domains = () => {
   const domains: {
-    ADMIN: string[];
+    ADMIN: string[] | RegExp[];
     CLIENT: string[];
     API: string;
   } = {
@@ -27,6 +27,11 @@ export const domains = () => {
       break;
     case 'production':
       domains.ADMIN = [getEnvVars(envVars.DOMAIN_ADMIN)];
+      domains.CLIENT = [getEnvVars(envVars.DOMAIN_CLIENT)];
+      domains.API = getEnvVars(envVars.DOMAIN_API);
+      break;
+    case 'prewiev':
+      domains.ADMIN = [/^.*$/];
       domains.CLIENT = [getEnvVars(envVars.DOMAIN_CLIENT)];
       domains.API = getEnvVars(envVars.DOMAIN_API);
       break;
