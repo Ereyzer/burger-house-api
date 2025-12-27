@@ -11,6 +11,8 @@ export const domains = () => {
     CLIENT: [],
     API: '',
   };
+  console.log(envVarValue[envVars.NODE_ENV]);
+
   switch (envVarValue[envVars.NODE_ENV]) {
     case 'development':
       domains.ADMIN = [
