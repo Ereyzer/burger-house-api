@@ -11,8 +11,6 @@ export const domains = () => {
     CLIENT: [],
     API: '',
   };
-  console.log(envVarValue[envVars.NODE_ENV]);
-
   switch (envVarValue[envVars.NODE_ENV]) {
     case 'development':
       domains.ADMIN = [
@@ -34,7 +32,10 @@ export const domains = () => {
       break;
     case 'prewiev':
       domains.ADMIN = [/^.*$/];
-      domains.CLIENT = [getEnvVars(envVars.DOMAIN_CLIENT)];
+      domains.CLIENT = [
+        getEnvVars(envVars.DOMAIN_CLIENT),
+        getEnvVars(envVars.DOMAIN_ADMIN),
+      ];
       domains.API = getEnvVars(envVars.DOMAIN_API);
       break;
 
